@@ -1,3 +1,60 @@
 <resources>
     <string name="app_name">FileSafe</string>
+    <string name="app_version">Filesafe Version 1.1.0</string>
+
+    <!--侧滑菜单-->
+
+    <string name="action_other_text">其他</string>
+    <string name="action_setting_text">设置</string>
+    <string name="action_about_text">关于</string>
+
+
+    <!--DirsFragment界面-->
+    <string name="action_add_dir_text">新建文件夹</string>
+    <string name="action_list_text">列表模式</string>
+    <string name="action_grid_text">网格模式</string>
+
+
+    <!--关于页面-->
+    <string name="about_app_author">code by Tanyiqu</string>
+    <string name="about_app_title">FileSafe</string>
+    <string name="about_app_content">
+        FileSafe，文件隐藏工具，由Tanyiqu在2019年9月独立编写的安卓实战项目，项目开源。
+        \n\n虽然网上有破解版的类似的文件加密和隐藏的工具，但是破解软件毕竟用着不爽，而且正版的价格也不菲。所以本人打算单独做一个，专门用于文件隐藏的工具，供我也供大家免费使用！
+        \n\n仓库地址：暂无
+        \n\n项目代码注释比较齐全，目录结构也十分清晰。以后尽量会添加新的小工具，敬请期待！项目仅用于学习用途，请勿用于商业用途！
+    </string>
+
+    <string name="about_author_title">Tanyiqu</string>
+
+    <string name="about_author_content">
+        Tanyiqu,出自唐代诗人白居易的《琵琶行》中的“莫辞更坐弹一曲”
+        \nTanyiqu在写此项目时为大三学生，计算机科学与技术专业
+        \n\n平时在宿舍和室友一起打游戏，业余时间写代码，会C/C++/C#/java/Python…
+        \n除C和java为学校所授，其余均为自学。
+        \n\n代表作：某某（这里不提）游戏的修改器，Windows剪贴板工具等，资源已经找不到了。
+        \n\n邮箱：1953649096@qq.com
+        \n\nGitHub：https://github.com/Tanyiqu
+    </string>
+
+    <string name="thanks_title">感谢</string>
+
+    <string name="thanks_content">
+        百度搜索引擎：https://www.baidu.com
+        \n\nCSDN博客：https://www.csdn.net
+        \n\n菜鸟教程中的安卓教程：https://www.runoob.com/w3cnote/android-tutorial-intro.html
+        \n\n《第一行代码Android》郭霖 http://guolin.tech
+        \n\n阿里巴巴矢量图标库：https://www.iconfont.cn
+        \n\nGitHub：https://github.com
+    </string>
+
+    <!--其他-->
+    <string name="img_content_description">图片</string>
+
+    <!--对话框-->
+    <string name="new_dir">新建目录</string>
+    <string name="dir_name">不能包含 \\ / : * ? \" &#062; &#060; |</string>
+    <string name="conform">取消</string>
+    <string name="cancel">新建</string>
+
 </resources>

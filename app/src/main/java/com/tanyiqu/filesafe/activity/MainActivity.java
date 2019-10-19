@@ -1,8 +1,10 @@
-package com.tanyiqu.filesafe;
+package com.tanyiqu.filesafe.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.tanyiqu.filesafe.R;
 
 public class MainActivity extends AppCompatActivity {
 

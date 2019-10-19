@@ -1,4 +1,4 @@
-package com.ws.filesafe.activity;
+package com.tanyiqu.filesafe.activity;
 
 import android.app.Activity;
 import android.content.DialogInterface;

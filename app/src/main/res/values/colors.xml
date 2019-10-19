@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <!--主题颜色-->
+    <color name="colorPrimary">#607D8B</color>
+    <color name="colorPrimaryDark">#465A65</color>
+    <color name="colorAccent">#6690FF</color>
+    <color name="colorStatusBar">#465A65</color>
+    <color name="colorToolBar">#6690FF</color>
+    <color name="colorActionBarTitle">#FFFFFF</color>
+    <color name="colorBackground">#EBEBEB</color>
+
+    <!--特效颜色-->
+    <color name="colorRipple">#DFDFDF</color>
+
+    <!--色彩颜色-->
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGray">#7F7F7F</color>
+    <color name="colorGreen">#67D5B5</color>
+    <color name="colorPurple">#C89EC4</color>
+
+    <!--控件颜色-->
+    <color name="colorLine">#7F7f7F</color>
+    <color name="colorNumBtnNormal">#FBFBFB</color>
+    <color name="colorNumBtnPressed">#DFDFDF</color>
+
+    <!--其他-->
+    <color name="colorDivider">#E5E5E5</color>
+    <color name="colorHeavyDivider">#EEEEEE</color>
+
+    <!---->
+
 </resources>

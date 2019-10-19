@@ -6,6 +6,59 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorStatusBar</item>
     </style>
+
+    <!--Splash主题-->
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash_rem</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!--MainActivity主题-->
+    <style name="ToolBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorStatusBar</item>
+    </style>
+
+    <!--对话框样式-->
+    <style name="NormalDialogStyle">
+        <!--对话框背景 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--边框 -->
+        <item name="android:windowFrame">@null</item>
+        <!--没有标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 是否浮现在Activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!--背景透明 -->
+        <item name="android:windowIsTranslucent">false</item>
+        <!-- 是否有覆盖 -->
+        <item name="android:windowContentOverlay">@null</item>
+        <!--进出的显示动画 -->
+        <item name="android:windowAnimationStyle">@style/normalDialogAnim</item>
+        <!--背景变暗-->
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <!--新建目录对话框 动画-->
+    <style name="normalDialogAnim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/anim_dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/anim_dialog_exit</item>
+    </style>
+
+    <!--新建目录对话框中的 EditText主题-->
+    <style name="MyEditText" parent="Theme.AppCompat.Light">
+        <!--默认下划线颜色-->
+        <item name="colorControlNormal">@color/colorGray</item>
+        <!--激活后下划线颜色-->
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
+    <!--主题-->
+
+    <!--主题-->
 
 </resources>

@@ -1,10 +1,10 @@
-package com.ws.filesafe.activity;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.tanyiqu.filesafe.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.ws.filesafe.data.Data;
 
