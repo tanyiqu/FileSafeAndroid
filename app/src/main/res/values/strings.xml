@@ -21,18 +21,19 @@
     <string name="about_app_content">
         FileSafe，文件隐藏工具，由Tanyiqu在2019年9月独立编写的安卓实战项目，项目开源。
         \n\n虽然网上有破解版的类似的文件加密和隐藏的工具，但是破解软件毕竟用着不爽，而且正版的价格也不菲。所以本人打算单独做一个，专门用于文件隐藏的工具，供我也供大家免费使用！
-        \n\n仓库地址：暂无
+        \n\n仓库地址：https://github.com/Tanyiqu/FileSafe
         \n\n项目代码注释比较齐全，目录结构也十分清晰。以后尽量会添加新的小工具，敬请期待！项目仅用于学习用途，请勿用于商业用途！
     </string>
 
     <string name="about_author_title">Tanyiqu</string>
 
     <string name="about_author_content">
-        Tanyiqu,出自唐代诗人白居易的《琵琶行》中的“莫辞更坐弹一曲”
+        Tanyiqu,名字出自唐代诗人白居易的《琵琶行》中的“莫辞更坐弹一曲”
         \nTanyiqu在写此项目时为大三学生，计算机科学与技术专业
         \n\n平时在宿舍和室友一起打游戏，业余时间写代码，会C/C++/C#/java/Python…
         \n除C和java为学校所授，其余均为自学。
         \n\n代表作：某某（这里不提）游戏的修改器，Windows剪贴板工具等，资源已经找不到了。
+        \n\n个人主页：https://tanyiqu.github.io
         \n\n邮箱：1953649096@qq.com
         \n\nGitHub：https://github.com/Tanyiqu
     </string>
