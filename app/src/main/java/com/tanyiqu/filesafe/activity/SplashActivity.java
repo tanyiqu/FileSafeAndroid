@@ -6,7 +6,7 @@ import android.os.Environment;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.ws.filesafe.data.Data;
+import com.tanyiqu.filesafe.data.Data;
 
 import java.io.File;
 

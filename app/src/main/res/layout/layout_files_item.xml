@@ -21,7 +21,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <com.ws.filesafe.view.MarqueeText
+    <com.tanyiqu.filesafe.view.MarqueeText
         android:id="@+id/tv_file_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

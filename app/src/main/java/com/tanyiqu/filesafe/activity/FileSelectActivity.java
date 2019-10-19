@@ -16,11 +16,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ws.filesafe.R;
-import com.ws.filesafe.adapter.FilesAdapter;
-import com.ws.filesafe.data.Data;
-import com.ws.filesafe.fragment.FilesFragment;
-import com.ws.filesafe.utils.Util;
+import com.tanyiqu.filesafe.R;
+import com.tanyiqu.filesafe.adapter.FilesAdapter;
+import com.tanyiqu.filesafe.data.Data;
+import com.tanyiqu.filesafe.fragment.FilesFragment;
+import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.File;
 import java.text.Collator;

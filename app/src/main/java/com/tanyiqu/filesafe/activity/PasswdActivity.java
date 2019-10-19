@@ -13,12 +13,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.ws.filesafe.R;
-import com.ws.filesafe.data.Data;
-import com.ws.filesafe.fragment.DirsFragment;
-import com.ws.filesafe.utils.FileUtil;
-import com.ws.filesafe.utils.ToastUtil;
-import com.ws.filesafe.widget.DirView;
+import com.tanyiqu.filesafe.R;
+import com.tanyiqu.filesafe.data.Data;
+import com.tanyiqu.filesafe.fragment.DirsFragment;
+import com.tanyiqu.filesafe.utils.FileUtil;
+import com.tanyiqu.filesafe.utils.ToastUtil;
+import com.tanyiqu.filesafe.fragment.DirsFragment;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -177,7 +177,7 @@ public class PasswdActivity extends Activity {
 
     private void initDirsView() {
         //使用配置文件初始化
-        List<DirView> dirViewList = new ArrayList<DirView>();
+        List<DirsFragment.DirView> dirViewList = new ArrayList<DirsFragment.DirView>();
         DirsFragment.refreshDirs();
     }
 

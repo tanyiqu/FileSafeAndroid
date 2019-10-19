@@ -9,8 +9,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
-import com.ws.filesafe.R;
-import com.ws.filesafe.data.Data;
+import com.tanyiqu.filesafe.R;
+import com.tanyiqu.filesafe.data.Data;
 
 import java.io.File;
 import java.util.List;
