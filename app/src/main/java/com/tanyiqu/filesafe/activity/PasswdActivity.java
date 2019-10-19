@@ -18,7 +18,6 @@ import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.fragment.DirsFragment;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
-import com.tanyiqu.filesafe.fragment.DirsFragment;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-//密码界面，默认密码4159
 public class PasswdActivity extends Activity {
 
     @Override

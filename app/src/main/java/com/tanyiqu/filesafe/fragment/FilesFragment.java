@@ -114,7 +114,7 @@ public class FilesFragment extends Fragment {
             BufferedReader br = new BufferedReader(in);
             String line = null;
             while((line = br.readLine()) != null){
-                String[] strings = line.split("#");
+                String[] strings = line.split(Data.Splitter);
                 FilesAdapter.FileView fv = new FilesAdapter.FileView(strings[0],strings[1],strings[2],strings[3],path);
                 Data.fileViewList.add(fv);
             }

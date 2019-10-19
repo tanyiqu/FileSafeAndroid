@@ -8,6 +8,7 @@ import android.util.Log;
 
 import androidx.core.content.FileProvider;
 
+import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.exception.NoSuchFileToPlayException;
 
 import java.io.BufferedWriter;
@@ -130,9 +131,9 @@ public class Util {
         try {
             FileWriter out = new FileWriter(iniFile,true);//追加
             BufferedWriter bw = new BufferedWriter(out);
-            bw.write(orName);bw.write("#");
-            bw.write(enName);bw.write("#");
-            bw.write(transferLongToDate(date));bw.write("#");
+            bw.write(orName);bw.write(Data.Splitter);
+            bw.write(enName);bw.write(Data.Splitter);
+            bw.write(transferLongToDate(date));bw.write(Data.Splitter);
             bw.write(byteToSize(size));bw.newLine();
             bw.close();
         } catch (IOException e) {
