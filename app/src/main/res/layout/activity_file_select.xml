@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.FileSelectActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+
+        <!--标题栏-->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_file_select"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimenActionBarHeight"
+            android:background="@color/colorToolBar"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/colorActionBarTitle"
+            app:navigationIcon="@drawable/ic_btn_back"
+            app:subtitleTextColor="#fff"
+            android:theme="@style/Base.Theme.AppCompat.Light" />
+
+        <TextView
+            android:id="@+id/tv_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="内部存储设备/"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_file_select"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+</FrameLayout>

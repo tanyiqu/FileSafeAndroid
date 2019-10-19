@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <group>
+        <item
+            android:id="@+id/nav_see_little_sister"
+            android:icon="@drawable/ic_btn_menu"
+            android:title="@string/app_name" />
+        <item
+            android:id="@+id/nav_see_news"
+            android:icon="@drawable/ic_btn_menu"
+            android:title="@string/app_name" />
+    </group>
+
+    <item android:title="TODO">
+        <menu>
+            <item
+                android:id="@+id/nav_use_check_weather"
+                android:icon="@drawable/ic_btn_menu"
+                android:title="@string/app_name" />
+            <item
+                android:id="@+id/nav_use_check_subway"
+                android:icon="@drawable/ic_btn_menu"
+                android:title="@string/app_name" />
+            <item
+                android:id="@+id/nav_use_tools"
+                android:icon="@drawable/ic_btn_menu"
+                android:title="@string/app_name" />
+        </menu>
+    </item>
+
+    <item android:title="@string/action_other_text">
+        <menu>
+            <item
+                android:id="@+id/action_setting"
+                android:icon="@drawable/ic_btn_menu"
+                android:title="@string/action_setting_text" />
+            <item
+                android:id="@+id/action_about"
+                android:icon="@drawable/ic_btn_menu"
+                android:title="@string/action_about_text" />
+        </menu>
+    </item>
+
+
+
+
+</menu>

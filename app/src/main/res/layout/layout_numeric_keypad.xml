@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <View android:layout_width="match_parent" android:layout_height="1px" android:background="@color/colorLine"/>
+    <!--第一排-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/bg_ripple"
+            android:text="1"
+            android:onClick="f1"/>
+        <View android:layout_width="1px" android:layout_height="match_parent" android:background="@color/colorLine"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="2"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/bg_ripple"
+            android:onClick="f2"/>
+        <View android:layout_width="1px" android:layout_height="match_parent" android:background="@color/colorLine"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="3"
+            android:background="@drawable/bg_ripple"
+            android:onClick="f3"/>
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1px" android:background="@color/colorLine"/>
+
+    <!--第二排-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="4" />
+        <View android:layout_width="1px" android:layout_height="match_parent" android:background="@color/colorLine"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="5" />
+        <View android:layout_width="1px" android:layout_height="match_parent" android:background="@color/colorLine"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="6" />
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1px" android:background="@color/colorLine"/>
+
+    <!--第三排-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="7" />
+        <View android:layout_width="1px" android:layout_height="match_parent" android:background="@color/colorLine"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="8" />
+        <View android:layout_width="1px" android:layout_height="match_parent" android:background="@color/colorLine"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="9" />
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1px" android:background="@color/colorLine"/>
+
+    <!--第四排-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="忘记密码" />
+        <View android:layout_width="1px" android:layout_height="match_parent" android:background="@color/colorLine"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="0" />
+        <View android:layout_width="1px" android:layout_height="match_parent" android:background="@color/colorLine"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="删除" />
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1px" android:background="@color/colorLine"/>
+
+
+</LinearLayout>
+
+<!--<LinearLayout-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="0dp"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:layout_weight="80"-->
+<!--    android:orientation="vertical">-->
+<!--    -->
+<!--</LinearLayout>-->

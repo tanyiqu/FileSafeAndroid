@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!--标题栏-->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_dirs"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimenActionBarHeight"
+            android:background="@color/colorToolBar"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/colorActionBarTitle"
+            app:navigationIcon="@drawable/ic_btn_menu"
+            app:subtitleTextColor="#fff"
+            android:theme="@style/Base.Theme.AppCompat.Light" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_dirs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorBackground"/>
+
+    </LinearLayout>
+
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/fab_add"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:fabSize="normal"-->
+<!--        android:src="@drawable/ic_btn_add"-->
+<!--        app:backgroundTint="#31bfcf"-->
+<!--        app:rippleColor="#e7d16b"-->
+<!--        app:borderWidth="0dp"-->
+<!--        app:elevation="50dp"-->
+<!--        android:clickable="true"-->
+<!--        android:focusable="true"-->
+<!--        android:layout_marginBottom="20dp"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        android:layout_gravity="end|bottom"/>-->
+</FrameLayout>
