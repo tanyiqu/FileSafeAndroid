@@ -28,14 +28,12 @@ import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.activity.MainActivity;
 import com.tanyiqu.filesafe.data.Data;
-import com.tanyiqu.filesafe.exception.NoSuchFileToOpenException;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
@@ -80,31 +78,30 @@ public class DirsFragment extends Fragment {
         //设置移除更多选项图片  如果不设置会默认使用系统灰色的图标
         toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.ic_btn_more));
         //添加menu
-        toolbar.inflateMenu(R.menu.menu_toolbar);
+        toolbar.inflateMenu(R.menu.menu_dirs_toolbar);
         //设置menu点击事件
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
-                    case R.id.action_add_dir:
-//                        ToastUtil.myToast(toolbar.getContext(),"新建文件夹");
+                    case R.id.action_add_dir://新建目录
                         mkDir(toolbar.getContext());
                         break;
-                    case R.id.action_grid:
-                        ToastUtil.myToast(toolbar.getContext(),"网格模式");
+                    case R.id.action_setting://设置界面
+                        MainActivity.fragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
+                                .replace(R.id.fragment_container,new SettingFragment())
+                                .addToBackStack(null)
+                                .commit();
                         break;
-                    case R.id.action_list:
-                        ToastUtil.myToast(toolbar.getContext(),"列表模式");
+                    case R.id.action_about://关于界面
+                        MainActivity.fragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
+                                .replace(R.id.fragment_container,new AboutFragment())
+                                .addToBackStack(null)
+                                .commit();
                         break;
-                    case R.id.action_play:
-
-                        try {
-                            FileUtil.openFile(toolbar.getContext(),new File(Data.externalStoragePath + "/下载/test.mp4"),"mp4");
-                        } catch (NoSuchFileToOpenException e) {
-                            ToastUtil.errorToast(toolbar.getContext(),e.getMessage());
-                        }
-
-                        break;
+                        
                     default:
                         break;
                 }

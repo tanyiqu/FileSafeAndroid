@@ -11,8 +11,6 @@
 
     <!--DirsFragment界面-->
     <string name="action_add_dir_text">新建文件夹</string>
-    <string name="action_list_text">列表模式</string>
-    <string name="action_grid_text">网格模式</string>
 
 
     <!--关于页面-->
