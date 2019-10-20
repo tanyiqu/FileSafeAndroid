@@ -101,7 +101,6 @@ public class DirsFragment extends Fragment {
                                 .addToBackStack(null)
                                 .commit();
                         break;
-                        
                     default:
                         break;
                 }
@@ -315,7 +314,7 @@ public class DirsFragment extends Fragment {
                         return;
                     }
                     //点击Dir的时候，构造好一个 FileView 的 List
-                    FilesFragment.refreshFileView(path);
+                    FilesFragment.refreshFileView_list(path);
                     //切换fragment
                     FilesFragment fragment = new FilesFragment(path,dirView.content);
                     MainActivity.fragmentManager.beginTransaction()

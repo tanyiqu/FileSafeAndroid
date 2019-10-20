@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.fragment.FilesFragment;
+import com.tanyiqu.filesafe.utils.ToastUtil;
 import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.File;
@@ -108,7 +110,6 @@ public class FileSelectActivity extends Activity {
         }
         //显示路径
         tv_path.setText(currPath.replace(Data.externalStoragePath,"内部存储设备"));
-
     }
 
     private void initRecycler() {
@@ -159,39 +160,50 @@ public class FileSelectActivity extends Activity {
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-            final FileInfo fileInfo = adapterFiles.get(position);
-            holder.img_files_logo.setImageDrawable(getDrawable(fileInfo.imgID));
-            holder.tv_file_name.setText(fileInfo.name);
-            holder.tv_file_size.setText(fileInfo.size);
-            holder.tv_file_date.setText(fileInfo.date);
+            final FileInfo item = adapterFiles.get(position);
+            holder.img_files_logo.setImageDrawable(getDrawable(item.imgID));
+            holder.tv_file_name.setText(item.name);
+            holder.tv_file_size.setText(item.size);
+            holder.tv_file_date.setText(item.date);
+            //点击事件
             holder.files_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(fileInfo.size.equals("文件夹")){
-//                        Toast.makeText(FileSelectActivity.this, "点击文件夹：" + fileInfo.name, Toast.LENGTH_SHORT).show();
-                        enterDir(fileInfo.parent + File.separator + fileInfo.name);
+                    if(item.size.equals("文件夹")){
+//                        Toast.makeText(FileSelectActivity.this, "点击文件夹：" + item.name, Toast.LENGTH_SHORT).show();
+                        enterDir(item.parent + File.separator + item.name);
                     }else {
-//                        Toast.makeText(FileSelectActivity.this, "点击：" + fileInfo.parent+ File.separator + fileInfo.name,Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(FileSelectActivity.this, "点击：" + item.parent+ File.separator + item.name,Toast.LENGTH_SHORT).show();
                         //加密此文件
                         //弹出对话框，确定加密
                         new AlertDialog.Builder(FileSelectActivity.this)
                                 .setTitle("加密")
-                                .setMessage(fileInfo.name)
+                                .setMessage(item.name)
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        encrypt(fileInfo.parent+ File.separator + fileInfo.name);
+                                        if(fileIsExist(item.name)){//如果配置文件列表里面已经有此文件，直接返回
+                                            ToastUtil.errorToast(FileSelectActivity.this,"文件已存在！");
+                                            return;
+                                        }
+                                        encrypt(item.parent+ File.separator + item.name);
                                         finish();
                                         //刷新显示
-                                        FilesFragment.refreshFileView(FilesFragment.path);
-                                        FilesFragment.FilesAdapter adapter = new FilesFragment.FilesAdapter(Data.fileViewList);
-                                        FilesFragment.recycler.setAdapter(adapter);
-                                        FilesFragment.recycler.setLayoutAnimation(MainActivity.controller);
+                                        FilesFragment.refreshFileView_list(FilesFragment.path);
+                                        FilesFragment.refreshFileView_screen();
                                     }
                                 })
                                 .setNegativeButton("取消",null)
                                 .show();
                     }
+                }
+            });
+            //长按事件
+            holder.files_item.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Toast.makeText(FileSelectActivity.this,"长按：" + item.name, Toast.LENGTH_SHORT).show();
+                    return true;
                 }
             });
         }
@@ -227,6 +239,17 @@ public class FileSelectActivity extends Activity {
         String size;
         String date;
         String parent;
+    }
+
+    //判断文件在配置文件里是否已经存在
+    //隐含条件：FilesFragment.path 为当前进入的目录
+    public boolean fileIsExist(String name){
+//        Toast.makeText(this, FilesFragment.path, Toast.LENGTH_SHORT).show();
+        String iniPath = FilesFragment.path + File.separator + "data.db";
+        File iniFile = new File(iniPath);
+        //检索是否出现 name
+        
+        return false;
     }
 
     //加密单个文件

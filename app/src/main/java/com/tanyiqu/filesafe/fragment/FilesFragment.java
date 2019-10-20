@@ -101,7 +101,8 @@ public class FilesFragment extends Fragment {
 
     //根据 当前FileView的路径 刷新filesView
     //根据 data.db 配置 Data.fileViewList
-    public static void refreshFileView(String path){
+    //刷新 List
+    public static void refreshFileView_list(String path){
         if(Data.fileViewList == null){
             Data.fileViewList = new ArrayList<FilesFragment.FileView>();
         }else {
@@ -124,6 +125,13 @@ public class FilesFragment extends Fragment {
         }
     }
 
+    //刷新 显示
+    //刷新 屏幕
+    public static void refreshFileView_screen(){
+        FilesFragment.FilesAdapter adapter = new FilesAdapter(Data.fileViewList);
+        recycler.setAdapter(adapter);
+        recycler.setLayoutAnimation(MainActivity.controller);
+    }
 
 
     /**
