@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,7 +25,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -37,7 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.activity.MainActivity;
 import com.tanyiqu.filesafe.data.Data;
-import com.tanyiqu.filesafe.exception.NoSuchFileToPlayException;
+import com.tanyiqu.filesafe.exception.NoSuchFileToOpenException;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
@@ -101,8 +99,8 @@ public class DirsFragment extends Fragment {
                     case R.id.action_play:
 
                         try {
-                            Util.openVideoFile(toolbar.getContext(),new File(Data.externalStoragePath + "/下载/test.mp4"));
-                        } catch (NoSuchFileToPlayException e) {
+                            FileUtil.openFile(toolbar.getContext(),new File(Data.externalStoragePath + "/下载/test.mp4"),"mp4");
+                        } catch (NoSuchFileToOpenException e) {
                             ToastUtil.errorToast(toolbar.getContext(),e.getMessage());
                         }
 
@@ -119,7 +117,7 @@ public class DirsFragment extends Fragment {
         recycler = root.findViewById(R.id.recycler_dirs);
         GridLayoutManager layoutManager = new GridLayoutManager(root.getContext(),2);
         recycler.setLayoutManager(layoutManager);
-        DirsAdapter adapter = new DirsAdapter(Data.dirViewList,getFragmentManager());
+        DirsAdapter adapter = new DirsAdapter(Data.dirViewList);
         recycler.setAdapter(adapter);
     }
 
@@ -203,7 +201,7 @@ public class DirsFragment extends Fragment {
                 dialog.dismiss();
                 //刷新显示
                 Data.dirViewList.add(new DirView(coverPath, dirName));
-                DirsAdapter adapter = new DirsAdapter(Data.dirViewList, getFragmentManager());
+                DirsAdapter adapter = new DirsAdapter(Data.dirViewList);
                 recycler.setAdapter(adapter);
                 ToastUtil.myToast(view.getContext(), "新建成功！");
             }
@@ -255,14 +253,12 @@ public class DirsFragment extends Fragment {
     public class DirsAdapter extends RecyclerView.Adapter<DirsAdapter.ViewHolder>{
 
         private List<DirView> dirViewList;
-        private FragmentManager fragmentManager;
         private final String[] options = new String[]{"重命名","删除","导出","设置封面"};
         private final static int DEFAULT_SELECT = 0;
         private int currSelectedOption = DEFAULT_SELECT;
 
-        public DirsAdapter(List<DirView> dirViewList, FragmentManager fragmentManager){
+        public DirsAdapter(List<DirView> dirViewList){
             this.dirViewList = dirViewList;
-            this.fragmentManager = fragmentManager;
         }
 
         //Holder类
@@ -307,8 +303,6 @@ public class DirsFragment extends Fragment {
                     //确定点击的是哪一个
                     String path = Data.externalStoragePath + File.separator + ".file_safe" + File.separator + "files" + File.separator + dirView.content;
 
-                    Toast.makeText(view.getContext(), path, Toast.LENGTH_SHORT).show();
-
                     File dir = new File(path);
                     if(!dir.exists()){
                         Toast.makeText(view.getContext(), "目录已经不存在了", Toast.LENGTH_SHORT).show();
@@ -319,7 +313,7 @@ public class DirsFragment extends Fragment {
                                 break;
                             }
                         }
-                        DirsAdapter adapter = new DirsAdapter(Data.dirViewList,fragmentManager);
+                        DirsAdapter adapter = new DirsAdapter(Data.dirViewList);
                         DirsFragment.recycler.setAdapter(adapter);
                         return;
                     }
@@ -327,7 +321,7 @@ public class DirsFragment extends Fragment {
                     FilesFragment.refreshFileView(path);
                     //切换fragment
                     FilesFragment fragment = new FilesFragment(path,dirView.content);
-                    fragmentManager.beginTransaction()
+                    MainActivity.fragmentManager.beginTransaction()
                             //动画效果
 //                        .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
                             .addToBackStack(null)
@@ -403,7 +397,7 @@ public class DirsFragment extends Fragment {
                             File dir = new File(Data.filesPath,name);
                             boolean flag = FileUtil.deleteDir_r(dir);
                             refreshDirs();
-                            DirsFragment.recycler.setAdapter(new DirsAdapter(Data.dirViewList, MainActivity.fragmentManager));
+                            DirsFragment.recycler.setAdapter(new DirsAdapter(Data.dirViewList));
                             if (flag){
                                 ToastUtil.myToast(context,"删除成功");
                             }else {

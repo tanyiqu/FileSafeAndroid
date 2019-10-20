@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,13 +23,12 @@ import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.activity.FileSelectActivity;
 import com.tanyiqu.filesafe.activity.MainActivity;
 import com.tanyiqu.filesafe.data.Data;
-import com.tanyiqu.filesafe.exception.NoSuchFileToPlayException;
+import com.tanyiqu.filesafe.exception.NoSuchFileToOpenException;
+import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
-import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,7 +52,7 @@ public class FilesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_files_plus,container,false);
+        View root = inflater.inflate(R.layout.fragment_files,container,false);
         initToolBar(root);
         initRecycler(root);
         addListeners(root);
@@ -176,22 +174,17 @@ public class FilesFragment extends Fragment {
         public void onBindViewHolder(@NonNull FilesAdapter.ViewHolder holder, int position) {
             final FilesFragment.FileView fileView = fileViewList.get(position);
 
-//        Bitmap bmp= BitmapFactory.decodeFile(fileView.coverPath);
-//        holder.img_files_logo.setImageBitmap(bmp);
-
             holder.files_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //找到它真实的名字
-                    String fn = new File(fileView.path + File.separator + fileView.encrypted_name).getPath();
-                    String msg = "原名字：" + fileView.original_name + '\n' + "真实路径：" + fn;
-                    Toast.makeText(view.getContext(), msg, Toast.LENGTH_SHORT).show();
-////                    打开此文件
-//                    try {
-//                        Util.openVideoFile(view.getContext(),new File(fileView.path + File.separator + fileView.encrypted_name));
-//                    } catch (NoSuchFileToPlayException e) {
-//                        ToastUtil.errorToast(view.getContext(),e.getMessage());
-//                    }
+                    //打开此文件
+                    try {
+                        File file = new File(fileView.path + File.separator + fileView.encrypted_name);
+                        String ext = FileUtil.getFileExt(fileView.original_name);
+                        FileUtil.openFile(view.getContext(),file ,ext);
+                    } catch (NoSuchFileToOpenException e) {
+                        ToastUtil.errorToast(view.getContext(),e.getMessage());
+                    }
                 }
             });
             holder.tv_file_name.setText(fileView.original_name);
@@ -222,7 +215,6 @@ public class FilesFragment extends Fragment {
         public String size;
         //file 所在的路径
         public String path;
-
 
         //原文件名 加密后文件名 日期 大小 所在路径（用于打开文件）
         public FileView(String original_name, String encrypted_name, String date, String size, String path) {

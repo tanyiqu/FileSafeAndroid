@@ -1,15 +1,8 @@
 package com.tanyiqu.filesafe.utils;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.util.Log;
 
-import androidx.core.content.FileProvider;
-
 import com.tanyiqu.filesafe.data.Data;
-import com.tanyiqu.filesafe.exception.NoSuchFileToPlayException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,32 +16,6 @@ import java.util.Date;
 import java.util.Random;
 
 public class Util {
-
-    //以视频方式打开文件
-    public static void openVideoFile(Context context, File file) throws NoSuchFileToPlayException {
-
-        if(! file.exists()){
-            throw new NoSuchFileToPlayException("文件不存在");
-        }
-
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".FileProvider", file);
-
-//            Toast.makeText(context, contentUri.getPath(), Toast.LENGTH_SHORT).show();
-
-            intent.setDataAndType(contentUri, "video/*");
-        } else {
-            Uri uri = Uri.fromFile(file);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setDataAndType(uri, "video/*");
-        }
-
-        context.startActivity(intent);
-    }
 
     //随机生成 [0,n] 的随机数
     public static int RandomInt(int n){

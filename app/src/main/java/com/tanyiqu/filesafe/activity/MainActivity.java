@@ -68,20 +68,14 @@ public class MainActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()){
                     case R.id.action_setting:   //设置页面
                         fragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.anim_fragment_right_in,
-                                    R.anim.anim_fragment_left_out,
-                                    R.anim.anim_fragment_left_in,
-                                    R.anim.anim_fragment_right_out)
-                            .replace(R.id.fragment_container,new SettingFragment())
-                            .addToBackStack(null)
-                            .commit();
+                                .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
+                                .replace(R.id.fragment_container,new SettingFragment())
+                                .addToBackStack(null)
+                                .commit();
                         break;
                     case R.id.action_about:     //关于页面
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.anim_fragment_right_in,
-                                        R.anim.anim_fragment_left_out,
-                                        R.anim.anim_fragment_left_in,
-                                        R.anim.anim_fragment_right_out)
+                        fragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
                                 .replace(R.id.fragment_container,new AboutFragment())
                                 .addToBackStack(null)
                                 .commit();

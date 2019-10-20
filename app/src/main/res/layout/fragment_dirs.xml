@@ -13,7 +13,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_dirs"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dimenActionBarHeight"
+            android:layout_height="?attr/actionBarSize"
             android:background="@color/colorToolBar"
             app:title="@string/app_name"
             app:titleTextColor="@color/colorActionBarTitle"
