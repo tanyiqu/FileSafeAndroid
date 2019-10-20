@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +23,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.activity.FileSelectActivity;
 import com.tanyiqu.filesafe.activity.MainActivity;
-import com.tanyiqu.filesafe.adapter.FilesAdapter;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.exception.NoSuchFileToPlayException;
 import com.tanyiqu.filesafe.utils.ToastUtil;
@@ -30,9 +30,11 @@ import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FilesFragment extends Fragment {
 
@@ -103,7 +105,7 @@ public class FilesFragment extends Fragment {
     //根据 data.db 配置 Data.fileViewList
     public static void refreshFileView(String path){
         if(Data.fileViewList == null){
-            Data.fileViewList = new ArrayList<FilesAdapter.FileView>();
+            Data.fileViewList = new ArrayList<FilesFragment.FileView>();
         }else {
             Data.fileViewList.clear();
         }
@@ -115,7 +117,7 @@ public class FilesFragment extends Fragment {
             String line = null;
             while((line = br.readLine()) != null){
                 String[] strings = line.split(Data.Splitter);
-                FilesAdapter.FileView fv = new FilesAdapter.FileView(strings[0],strings[1],strings[2],strings[3],path);
+                FilesFragment.FileView fv = new FilesFragment.FileView(strings[0],strings[1],strings[2],strings[3],path);
                 Data.fileViewList.add(fv);
             }
             br.close();
@@ -125,5 +127,111 @@ public class FilesFragment extends Fragment {
     }
 
 
+
+    /**
+     * 适配器类
+     */
+    public static class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> {
+
+        private List<FileView> fileViewList;
+
+        //ViewHolder类
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            //主视图 用于点击/长按事件
+            ConstraintLayout files_item;
+            ImageView img_files_logo;
+            TextView tv_file_name;
+            TextView tv_file_size;
+            TextView tv_file_date;
+
+            String original_name;    //原文件名字
+            String encrypted_name;   //加密后的名字
+            public String path;             //file所在的目录路径
+
+            ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                files_item = itemView.findViewById(R.id.files_item);
+                img_files_logo = itemView.findViewById(R.id.img_files_logo);
+                tv_file_name = itemView.findViewById(R.id.tv_file_name);
+                tv_file_size = itemView.findViewById(R.id.tv_file_size);
+                tv_file_date = itemView.findViewById(R.id.tv_file_date);
+            }
+        }
+
+        //构造
+        public FilesAdapter(List<FilesFragment.FileView> fileViewList){
+            this.fileViewList = fileViewList;
+        }
+
+        @NonNull
+        @Override
+        public FilesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_files_item,parent,false);
+            return new ViewHolder(root);
+
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull FilesAdapter.ViewHolder holder, int position) {
+            final FilesFragment.FileView fileView = fileViewList.get(position);
+
+//        Bitmap bmp= BitmapFactory.decodeFile(fileView.coverPath);
+//        holder.img_files_logo.setImageBitmap(bmp);
+
+            holder.files_item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //找到它真实的名字
+                    String fn = new File(fileView.path + File.separator + fileView.encrypted_name).getPath();
+                    String msg = "原名字：" + fileView.original_name + '\n' + "真实路径：" + fn;
+                    Toast.makeText(view.getContext(), msg, Toast.LENGTH_SHORT).show();
+////                    打开此文件
+//                    try {
+//                        Util.openVideoFile(view.getContext(),new File(fileView.path + File.separator + fileView.encrypted_name));
+//                    } catch (NoSuchFileToPlayException e) {
+//                        ToastUtil.errorToast(view.getContext(),e.getMessage());
+//                    }
+                }
+            });
+            holder.tv_file_name.setText(fileView.original_name);
+            holder.tv_file_size.setText(fileView.size);
+            holder.tv_file_date.setText(fileView.date);
+            holder.original_name = fileView.original_name;
+            holder.encrypted_name = fileView.encrypted_name;
+            holder.path = fileView.path;
+        }
+
+        @Override
+        public int getItemCount() {
+            return fileViewList.size();
+        }
+
+    }
+
+    public static class FileView {
+        //封面
+        public Drawable drawable;
+        public String coverPath;
+        //名字
+        public String original_name;    //原文件名字
+        public String encrypted_name;   //加密后的名字
+        //日期
+        public String date;
+        //大小
+        public String size;
+        //file 所在的路径
+        public String path;
+
+
+        //原文件名 加密后文件名 日期 大小 所在路径（用于打开文件）
+        public FileView(String original_name, String encrypted_name, String date, String size, String path) {
+            this.original_name = original_name;
+            this.encrypted_name = encrypted_name;
+            this.date = date;
+            this.size = size;
+            this.path = path;
+        }
+    }
 
 }

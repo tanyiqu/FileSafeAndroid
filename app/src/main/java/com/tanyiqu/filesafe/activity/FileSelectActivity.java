@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tanyiqu.filesafe.R;
-import com.tanyiqu.filesafe.adapter.FilesAdapter;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.fragment.FilesFragment;
 import com.tanyiqu.filesafe.utils.Util;
@@ -185,7 +184,7 @@ public class FileSelectActivity extends Activity {
                                         finish();
                                         //刷新显示
                                         FilesFragment.refreshFileView(FilesFragment.path);
-                                        FilesAdapter adapter = new FilesAdapter(Data.fileViewList);
+                                        FilesFragment.FilesAdapter adapter = new FilesFragment.FilesAdapter(Data.fileViewList);
                                         FilesFragment.recycler.setAdapter(adapter);
                                         FilesFragment.recycler.setLayoutAnimation(MainActivity.controller);
                                     }

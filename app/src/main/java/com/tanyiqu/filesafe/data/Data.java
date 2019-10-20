@@ -2,8 +2,7 @@ package com.tanyiqu.filesafe.data;
 
 import android.Manifest;
 import android.util.Log;
-
-import com.tanyiqu.filesafe.adapter.FilesAdapter;
+;
 import com.tanyiqu.filesafe.fragment.DirsFragment;
 import com.tanyiqu.filesafe.fragment.FilesFragment;
 
@@ -26,7 +25,7 @@ public class Data {
     //目录视图      列表
     public static List<DirsFragment.DirView> dirViewList;
     //文件视图      列表
-    public static List<FilesAdapter.FileView> fileViewList;
+    public static List<FilesFragment.FileView> fileViewList;
 
     /**
      * 以下函数为赋值函数
