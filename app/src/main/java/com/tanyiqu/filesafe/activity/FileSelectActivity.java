@@ -23,7 +23,11 @@ import com.tanyiqu.filesafe.fragment.FilesFragment;
 import com.tanyiqu.filesafe.utils.ToastUtil;
 import com.tanyiqu.filesafe.utils.Util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -244,12 +248,27 @@ public class FileSelectActivity extends Activity {
     //判断文件在配置文件里是否已经存在
     //隐含条件：FilesFragment.path 为当前进入的目录
     public boolean fileIsExist(String name){
-//        Toast.makeText(this, FilesFragment.path, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, FilesFragment.path, Toast.LENGTH_SHORT).show();
         String iniPath = FilesFragment.path + File.separator + "data.db";
         File iniFile = new File(iniPath);
+        boolean flag = false;
         //检索是否出现 name
-        
-        return false;
+        try {
+            FileReader in = new FileReader(iniFile);
+            BufferedReader br = new BufferedReader(in);
+            String line;
+            while ((line = br.readLine()) != null){
+                String[] strings = line.split(Data.Splitter);
+                if(strings[0].equals(name)){//如果重复了
+                    flag = true;
+                    break;
+                }
+            }
+            br.close();
+        } catch (IOException e) {
+            return true;
+        }
+        return flag;
     }
 
     //加密单个文件
