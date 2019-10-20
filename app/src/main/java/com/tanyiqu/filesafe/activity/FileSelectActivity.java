@@ -82,7 +82,16 @@ public class FileSelectActivity extends Activity {
             fileInfo.date = Util.transferLongToDate(f.lastModified());
             if(f.isDirectory()){//文件夹
                 fileInfo.imgID = R.mipmap.ic_launcher_rem;
-                fileInfo.size = "文件夹";
+                //计算出子文件数量，不加隐藏文件
+                int count = 0;
+                File[] sub = f.listFiles();
+                for(File subFile : sub){
+                    if(subFile.isHidden()){
+                        continue;
+                    }
+                    count++;
+                }
+                fileInfo.size = count + "项";
                 Dirs.add(fileInfo);
             }else { //文件
                 fileInfo.imgID = R.mipmap.doc;
@@ -125,6 +134,7 @@ public class FileSelectActivity extends Activity {
     private void initToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbar_file_select);
         toolbar.setTitle("选择文件");
+        toolbar.setSubtitle("长按选择文件夹");
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,7 +183,7 @@ public class FileSelectActivity extends Activity {
             holder.files_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(item.size.equals("文件夹")){
+                    if(item.size.contains("项")){
 //                        Toast.makeText(FileSelectActivity.this, "点击文件夹：" + item.name, Toast.LENGTH_SHORT).show();
                         enterDir(item.parent + File.separator + item.name);
                     }else {

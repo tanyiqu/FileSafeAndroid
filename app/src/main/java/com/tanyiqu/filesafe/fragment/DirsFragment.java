@@ -177,7 +177,18 @@ public class DirsFragment extends Fragment {
                 }
                 //给新建的文件夹，添加默认封面
                 Resources res = getResources();
-                BitmapDrawable d = (BitmapDrawable) res.getDrawable(R.mipmap.other);
+                BitmapDrawable d;
+                //如果输入特定的名字，添加特定的封面
+                switch (dirName){
+                    case "视频":
+                        d = (BitmapDrawable) res.getDrawable(R.mipmap.video);
+                        break;
+                    case "图片":
+                        d = (BitmapDrawable) res.getDrawable(R.mipmap.pic);
+                        break;
+                    default:
+                        d = (BitmapDrawable) res.getDrawable(R.mipmap.other);
+                }
                 Bitmap img = d.getBitmap();
                 String coverPath = newDir.getPath() + File.separator + "cover.jpg";
                 String iniPath = newDir.getPath() + File.separator + "data.db";
