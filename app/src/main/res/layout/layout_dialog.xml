@@ -11,10 +11,10 @@
         android:id="@+id/tv_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:gravity="center_horizontal|start"
         android:padding="12dp"
         android:layout_marginTop="0dp"
-        android:text="@string/new_dir"
+        android:text="@string/dialog_title"
         android:textSize="19sp"
         android:textColor="#000000"/>
 
@@ -34,6 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
+                android:layout_marginStart="5dp"
                 android:textSize="15sp"
                 android:text="@string/dir_name"/>
             <EditText
@@ -67,8 +68,8 @@
             android:background="@drawable/shape_dialog_bottomleft"
             android:gravity="center"
             android:layout_weight="1.0"
-            android:text="@string/conform"
-            android:textSize="12sp"
+            android:text="@string/cancel"
+            android:textSize="16sp"
             android:textColor="#000000"/>
 
         <View
@@ -83,9 +84,9 @@
             android:background="@drawable/shape_dialog_bottomright"
             android:gravity="center"
             android:layout_weight="1.0"
-            android:text="@string/cancel"
-            android:textSize="12sp"
-            android:textColor="#000000"/>
+            android:text="@string/conform"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"/>
 
 
     </LinearLayout>

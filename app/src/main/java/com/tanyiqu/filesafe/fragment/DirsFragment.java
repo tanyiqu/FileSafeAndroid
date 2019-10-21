@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -123,9 +122,12 @@ public class DirsFragment extends Fragment {
     private void mkDir(Context context) {
         //弹出一个对话框
         final Dialog dialog = new Dialog(context, R.style.NormalDialogStyle);
-        View view = View.inflate(context, R.layout.layout_dialog_mkdir, null);
+        View view = View.inflate(context, R.layout.layout_dialog, null);
         TextView dialog_cancel = view.findViewById(R.id.dialog_cancel);
         TextView dialog_conform = view.findViewById(R.id.dialog_conform);
+        TextView tv_dialog_title = view.findViewById(R.id.tv_dialog_title);
+        tv_dialog_title.setText("新建目录");
+        dialog_conform.setText("新建");
         final EditText edit_dir_name = view.findViewById(R.id.edit_dir_name);
         // 设置自定义的布局
         dialog.setContentView(view);
