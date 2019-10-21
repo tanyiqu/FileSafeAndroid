@@ -3,6 +3,7 @@ package com.tanyiqu.filesafe.activity;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 

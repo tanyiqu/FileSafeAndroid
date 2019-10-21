@@ -11,10 +11,12 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,6 +47,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DirsFragment extends Fragment {
 
@@ -59,7 +63,6 @@ public class DirsFragment extends Fragment {
         initToolBar(root);
         //初始化RecyclerView
         initRecycler(root);
-
         return root;
 
     }
@@ -124,7 +127,6 @@ public class DirsFragment extends Fragment {
         TextView dialog_cancel = view.findViewById(R.id.dialog_cancel);
         TextView dialog_conform = view.findViewById(R.id.dialog_conform);
         final EditText edit_dir_name = view.findViewById(R.id.edit_dir_name);
-//        edit_dir_name.requestFocus();
         // 设置自定义的布局
         dialog.setContentView(view);
         //使得点击对话框外部不消失对话框
@@ -204,7 +206,6 @@ public class DirsFragment extends Fragment {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 dialog.dismiss();
                 //刷新显示
                 Data.dirViewList.add(new DirView(coverPath, dirName));
@@ -214,8 +215,16 @@ public class DirsFragment extends Fragment {
             }
         });
         dialog.show();
-
-
+        //弹出输入法
+        edit_dir_name.requestFocus();
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) edit_dir_name.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(edit_dir_name,InputMethodManager.SHOW_IMPLICIT);
+            }
+        },150);
     }
 
     //根据配置文件夹 刷新
