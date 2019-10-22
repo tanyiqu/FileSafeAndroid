@@ -7,6 +7,7 @@ import android.os.Build;
 
 import androidx.core.content.FileProvider;
 
+import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.exception.NoSuchFileToOpenException;
 
 import java.io.File;
@@ -55,6 +56,71 @@ public class FileUtil {
         return ext.toLowerCase();
     }
 
+    public static int getImgId(String ext){
+        switch (ext){
+            case "apk":
+                return R.mipmap.ic_file_apk;
+            case "tar":
+            case "7z":
+                return R.mipmap.ic_file_archive;
+            case "asf":
+                return R.mipmap.ic_file_asf;
+            case "avi":
+                return R.mipmap.ic_file_avi;
+            case "bmp":
+                return R.mipmap.ic_file_bmp;
+            case "doc":
+            case "docx":
+                return R.mipmap.ic_file_word;
+            case "gif":
+                return R.mipmap.ic_file_gif;
+            case "html":
+                return R.mipmap.ic_file_html;
+            case "ico":
+                return R.mipmap.ic_file_ico;
+            case "jpg":
+            case "jpeg":
+                return R.mipmap.ic_file_jpg;
+            case "log":
+                return R.mipmap.ic_file_log;
+            case "mov":
+                return R.mipmap.ic_file_mov;
+            case "mp3":
+                return R.mipmap.ic_file_mp3;
+            case "mp4":
+                return R.mipmap.ic_file_mp4;
+            case "mpeg":
+                return R.mipmap.ic_file_mpeg;
+            case "pdf":
+                return R.mipmap.ic_file_pdf;
+            case "png":
+                return R.mipmap.ic_file_png;
+            case "ppt":
+                return R.mipmap.ic_file_ppt;
+            case "rar":
+                return R.mipmap.ic_file_rar;
+            case "txt":
+                return R.mipmap.ic_file_txt;
+            case "vob":
+                return R.mipmap.ic_file_vob;
+            case "wav":
+                return R.mipmap.ic_file_wav;
+            case "wma":
+                return R.mipmap.ic_file_wma;
+            case "wmv":
+                return R.mipmap.ic_file_wmv;
+            case "xls":
+            case "xlsx":
+                return R.mipmap.ic_file_xls;
+            case "xml":
+                return R.mipmap.ic_file_xml;
+            case "zip":
+                return R.mipmap.ic_file_zip;
+            case "":
+            default:
+                return R.mipmap.ic_file_default;
+        }
+    }
 
     private static String getType(String ext) {
         switch (ext){

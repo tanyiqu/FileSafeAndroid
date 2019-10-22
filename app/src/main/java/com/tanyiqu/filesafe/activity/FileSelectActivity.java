@@ -20,12 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.fragment.FilesFragment;
+import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
 import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.Collator;
@@ -81,10 +81,11 @@ public class FileSelectActivity extends Activity {
             fileInfo.name = f.getName();
             fileInfo.date = Util.transferLongToDate(f.lastModified());
             if(f.isDirectory()){//文件夹
-                fileInfo.imgID = R.mipmap.ic_launcher_rem;
+                fileInfo.imgID = R.mipmap.ic_file_folder;
                 //计算出子文件数量，不加隐藏文件
                 int count = 0;
                 File[] sub = f.listFiles();
+                assert sub != null;
                 for(File subFile : sub){
                     if(subFile.isHidden()){
                         continue;
@@ -94,7 +95,7 @@ public class FileSelectActivity extends Activity {
                 fileInfo.size = count + "项";
                 Dirs.add(fileInfo);
             }else { //文件
-                fileInfo.imgID = R.mipmap.doc;
+                fileInfo.imgID = FileUtil.getImgId(FileUtil.getFileExt(fileInfo.name));//根据扩展名，适配图标
                 fileInfo.size = Util.byteToSize(f.length());
                 Files.add(fileInfo);
             }
