@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -18,6 +17,7 @@ import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.fragment.DirsFragment;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
+import com.tanyiqu.filesafe.view.NineLockView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,6 +30,9 @@ import java.util.List;
 
 public class PasswdActivity extends Activity {
 
+    String pass;
+    private static final String DEFAULT_PASSWD = "4753";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,9 +43,39 @@ public class PasswdActivity extends Activity {
     private void init() {
         //初始化环境 文件夹等
         detect();
-        //初始化文件夹视图列表
-        //现在创建视图 可能会有 上次安装未删净的文件继续显示的 bug
-//        initDirsView();
+        //九宫格解锁
+        initNineLock();
+    }
+
+    private void initNineLock() {
+        NineLockView nineLockView = findViewById(R.id.nineLock);
+        nineLockView.setOnPatternChangedListener(new NineLockView.OnPatternChangedListener() {
+            @Override
+            public void onPatternChanged(NineLockView nineLockView, String passwd) {
+                //检测密码是否正确
+                if(passwd == null){
+                    ToastUtil.errorToast(PasswdActivity.this,"至少连接4个点");
+                    nineLockView.setWrong();
+                    nineLockView.refreshView(true);
+                }else {
+                    if (passwd.equals(DEFAULT_PASSWD)){
+                        //密码正确
+                        ToastUtil.myToast(PasswdActivity.this,"欢迎回来");
+                        goMain();
+                    }else {
+                        //密码错误
+                        ToastUtil.errorToast(PasswdActivity.this,"密码错误");
+                        //震动一下
+                        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                        if (vibrator != null) {
+                            vibrator.vibrate(100);
+                        }
+                        nineLockView.setWrong();
+                        nineLockView.refreshView(false);
+                    }
+                }
+            }
+        });
     }
 
     private void detect() {
@@ -177,29 +210,6 @@ public class PasswdActivity extends Activity {
         //使用配置文件初始化
         List<DirsFragment.DirView> dirViewList = new ArrayList<DirsFragment.DirView>();
         DirsFragment.refreshDirs();
-    }
-
-    public void f1(View view){
-        ToastUtil.myToast(this,"欢迎回来");
-        goMain();
-    }
-
-    public void f2(View view){
-        ToastUtil.errorToast(this,"密码错误");
-        //震动一下
-        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        if (vibrator != null) {
-            vibrator.vibrate(100);
-        }
-    }
-
-    //调用前摄像头拍照
-    public void f3(View view){
-        //申请权限
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            requestPermissions(Data.perms_camera,11);
-//        }
-
     }
 
     public void goMain(){
