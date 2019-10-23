@@ -91,7 +91,7 @@ public class DirsFragment extends Fragment {
                         break;
                     case R.id.action_setting://设置界面
                         MainActivity.fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
+                                .setCustomAnimations(R.anim.anim_fragment_bottom_in, R.anim.anim_fragment_top_out, R.anim.anim_fragment_top_in, R.anim.anim_fragment_bottom_out)
                                 .replace(R.id.fragment_container,new SettingFragment())
                                 .addToBackStack(null)
                                 .commit();

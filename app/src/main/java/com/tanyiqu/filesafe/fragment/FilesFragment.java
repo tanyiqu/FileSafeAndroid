@@ -1,5 +1,6 @@
 package com.tanyiqu.filesafe.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -181,20 +182,20 @@ public class FilesFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull FilesAdapter.ViewHolder holder, int position) {
             final FilesFragment.FileView fileView = fileViewList.get(position);
-
+            final String ext = FileUtil.getFileExt(fileView.original_name);;
             holder.files_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //打开此文件
                     try {
                         File file = new File(fileView.path + File.separator + fileView.encrypted_name);
-                        String ext = FileUtil.getFileExt(fileView.original_name);
                         FileUtil.openFile(view.getContext(),file ,ext);
                     } catch (NoSuchFileToOpenException e) {
                         ToastUtil.errorToast(view.getContext(),e.getMessage());
                     }
                 }
             });
+            holder.img_files_logo.setImageDrawable(MainActivity.activity.getDrawable(FileUtil.getImgId(ext)));
             holder.tv_file_name.setText(fileView.original_name);
             holder.tv_file_size.setText(fileView.size);
             holder.tv_file_date.setText(fileView.date);
@@ -213,6 +214,7 @@ public class FilesFragment extends Fragment {
     public static class FileView {
         //封面
         public Drawable drawable;
+        public int imgID;
         public String coverPath;
         //名字
         public String original_name;    //原文件名字
@@ -232,6 +234,15 @@ public class FilesFragment extends Fragment {
             this.size = size;
             this.path = path;
         }
+
+        public FileView(Drawable drawable,String original_name, String encrypted_name, String date, String size, String path) {
+            this.original_name = original_name;
+            this.encrypted_name = encrypted_name;
+            this.date = date;
+            this.size = size;
+            this.path = path;
+        }
+
     }
 
 }

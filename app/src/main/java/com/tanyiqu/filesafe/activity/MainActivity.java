@@ -1,5 +1,6 @@
 package com.tanyiqu.filesafe.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.fragment.AboutFragment;
 import com.tanyiqu.filesafe.fragment.DirsFragment;
+import com.tanyiqu.filesafe.fragment.FilesFragment;
 import com.tanyiqu.filesafe.fragment.SettingFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public static FragmentManager fragmentManager;
     public static boolean neededDoubleClickToExit = true;
     public static LayoutAnimationController controller;//用作子fragment中的recycler动画
-
+    public static Activity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
         init();
+        MainActivity.activity = this;
     }
 
     private void init() {
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.action_about:     //关于页面
                         fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
+                                .setCustomAnimations(R.anim.anim_fragment_bottom_in, R.anim.anim_fragment_top_out, R.anim.anim_fragment_top_in, R.anim.anim_fragment_bottom_out)
                                 .replace(R.id.fragment_container,new AboutFragment())
                                 .addToBackStack(null)
                                 .commit();

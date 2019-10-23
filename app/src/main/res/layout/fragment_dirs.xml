@@ -19,7 +19,8 @@
             app:titleTextColor="@color/colorActionBarTitle"
             app:navigationIcon="@drawable/ic_btn_menu"
             app:subtitleTextColor="#fff"
-            android:theme="@style/Base.Theme.AppCompat.Light" />
+            android:theme="@style/Base.Theme.AppCompat.Light"/>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_dirs"
