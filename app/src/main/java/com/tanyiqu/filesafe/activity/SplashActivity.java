@@ -25,6 +25,7 @@ public class SplashActivity extends AppCompatActivity{
             //有权限，启动主界面
             Data.setExternalStoragePath(Environment.getExternalStorageDirectory().getAbsolutePath());
             Data.setFilesPath(Data.externalStoragePath + File.separator + ".file_safe" + File.separator + "files");
+            Data.setExportPath(Data.externalStoragePath + File.separator + "FileSafe" + File.separator + "Export");
             startActivity(new Intent(this, PasswdActivity.class));
         }else{
             //无权限，启动请求权限界面

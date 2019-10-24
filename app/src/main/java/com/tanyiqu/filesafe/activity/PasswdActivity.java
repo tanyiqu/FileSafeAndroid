@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -19,9 +20,13 @@ import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
 import com.tanyiqu.filesafe.view.NineLockView;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -32,6 +37,9 @@ public class PasswdActivity extends Activity {
 
     String pass;
     private static final String DEFAULT_PASSWD = "4753";
+    TextView tv_msg;
+    //是否是设置密码
+    boolean isSetPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +49,7 @@ public class PasswdActivity extends Activity {
     }
 
     private void init() {
+        tv_msg = findViewById(R.id.tv_msg);
         //初始化环境 文件夹等
         detect();
         //九宫格解锁
@@ -49,29 +58,90 @@ public class PasswdActivity extends Activity {
 
     private void initNineLock() {
         NineLockView nineLockView = findViewById(R.id.nineLock);
+        final File passFile = new File(Data.internalStoragePath,"passwd");
+        //文件不存在则创建
+        if(!passFile.exists()){
+            try {
+                passFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else {//文件存在且大小不为0
+            if(passFile.length() != 0){
+                try {
+                    FileReader in = new FileReader(passFile);
+                    BufferedReader br = new BufferedReader(in);
+                    pass = br.readLine();
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(isSetPass){
+            tv_msg.setText("设置图案密码");
+        }else {
+            tv_msg.setText("绘制图案");
+        }
         nineLockView.setOnPatternChangedListener(new NineLockView.OnPatternChangedListener() {
             @Override
             public void onPatternChanged(NineLockView nineLockView, String passwd) {
-                //检测密码是否正确
-                if(passwd == null){
-                    ToastUtil.errorToast(PasswdActivity.this,"至少连接4个点");
-                    nineLockView.setWrong();
-                    nineLockView.refreshView(true);
-                }else {
-                    if (passwd.equals(DEFAULT_PASSWD)){
-                        //密码正确
-                        ToastUtil.myToast(PasswdActivity.this,"欢迎回来");
-                        goMain();
+                if(isSetPass){
+                    //设置密码
+                    //获取两次绘制的密码
+                    if(passwd == null){
+                        Toast.makeText(PasswdActivity.this, "至少连接4个点", Toast.LENGTH_SHORT).show();
+                        nineLockView.refreshView(true);
                     }else {
-                        //密码错误
-                        ToastUtil.errorToast(PasswdActivity.this,"密码错误");
-                        //震动一下
-                        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                        if (vibrator != null) {
-                            vibrator.vibrate(100);
+                        if(pass == null){//第一次绘制
+                            //记录绘制的密码
+                            pass = passwd;
+                            Toast.makeText(PasswdActivity.this, "请再绘制一次", Toast.LENGTH_SHORT).show();
+                            nineLockView.refreshView(false);
+                        }else {//第二次绘制
+                            if(pass.equals(passwd)){//如果和上次绘制的一样，此密码就为新密码
+                                Toast.makeText(PasswdActivity.this, "以设置密码为：" + passwd, Toast.LENGTH_SHORT).show();
+                                //记录新密码
+                                try {
+                                    FileWriter out = new FileWriter(passFile);
+                                    BufferedWriter bw = new BufferedWriter(out);
+                                    bw.write(passwd);
+                                    bw.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                //记录完成，跳转
+                                goMain();
+                            }else{//否则，重新绘制两次
+                                nineLockView.refreshView(false);
+                                Toast.makeText(PasswdActivity.this, "密码不一致", Toast.LENGTH_SHORT).show();
+                                pass = null;
+                            }
                         }
+                    }
+
+                }else{
+                    //检测密码
+                    if(passwd == null){
+                        ToastUtil.errorToast(PasswdActivity.this,"至少连接4个点");
                         nineLockView.setWrong();
-                        nineLockView.refreshView(false);
+                        nineLockView.refreshView(true);
+                    }else {
+                        if (passwd.equals(pass)){
+                            //密码正确
+                            ToastUtil.myToast(PasswdActivity.this,"欢迎回来");
+                            goMain();
+                        }else {
+                            //密码错误
+                            ToastUtil.errorToast(PasswdActivity.this,"密码错误");
+                            //震动一下
+                            Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                            if (vibrator != null) {
+                                vibrator.vibrate(100);
+                            }
+                            nineLockView.setWrong();
+                            nineLockView.refreshView(false);
+                        }
                     }
                 }
             }
@@ -82,8 +152,15 @@ public class PasswdActivity extends Activity {
         //如果标志文件已存在，跳过这一步
         //标识文件
         //标识文件存放在 内部存储中，如果卸载再重装了，可以有提示
-        File flagFile1 = new File(Data.internalStoragePath,"flag");
+        final File flagFile1 = new File(Data.internalStoragePath,"flag");
         File flagFile2 = new File(Data.externalStoragePath+ "/.file_safe","flag");
+        File passFile = new File(Data.internalStoragePath,"passwd");
+        //是否需要设置密码
+        if(!passFile.exists() || passFile.length()==0){//密码文件不存在或者大小为0时设置
+            isSetPass = true;
+        }else {
+            isSetPass = false;
+        }
         if(flagFile1.exists()){//如果此文件存在则一定 非首次开启
             //非首次开启
             initDirsView();
@@ -98,6 +175,11 @@ public class PasswdActivity extends Activity {
                     .setPositiveButton("吓死我了，快恢复", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            try {
+                                flagFile1.createNewFile();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             initDirsView();
                         }
                     })//恢复操作相当于什么也不做
@@ -120,13 +202,14 @@ public class PasswdActivity extends Activity {
         }
         createIniFiles();
         initDirsView();
+
     }
 
     private void createIniFiles(){
         //首次开启并且首次安装
         File flagFile1 = new File(Data.internalStoragePath,"flag");
         File flagFile2 = new File(Data.externalStoragePath + File.separator + ".file_safe","flag");
-
+        File passFile = new File(Data.internalStoragePath,"passwd");
         boolean flag = false;
         String rootPath = Data.externalStoragePath + File.separator + ".file_safe";         //根路径
         String filesPath = Data.filesPath;             //存放文件的路径 (files文件夹路径)
@@ -152,6 +235,9 @@ public class PasswdActivity extends Activity {
             if(!flagFile2.exists()){
                 flag = flagFile2.createNewFile();
             }
+            if(!passFile.exists()){
+                flag = passFile.createNewFile();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,7 +245,7 @@ public class PasswdActivity extends Activity {
             flag = filesDir.mkdir();
         }
 
-        //默认分出5个文件夹 图片、视频、音频、文档、其他
+        //默认分出文件夹
         File picDir = new File(filesPath,"图片");
         File videoDir = new File(filesPath,"视频");
         if(!picDir.exists()) flag = picDir.mkdir();

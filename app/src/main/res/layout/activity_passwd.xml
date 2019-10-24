@@ -8,6 +8,17 @@
     android:orientation="vertical"
     android:background="@drawable/bg_passwd">
 
+    <TextView
+        android:id="@+id/tv_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/nineLock"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/colorWhite"
+        android:textSize="15sp"
+        android:text="绘制图案"/>
+
     <com.tanyiqu.filesafe.view.NineLockView
         android:id="@+id/nineLock"
         android:layout_width="wrap_content"
