@@ -29,23 +29,18 @@ public class FileUtil {
 
         //根据扩展名，适配相应的type
         String type = getType(ext);
-
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             Uri contentUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".FileProvider", file);
-
-//            Toast.makeText(context, contentUri.getPath(), Toast.LENGTH_SHORT).show();
-
             intent.setDataAndType(contentUri,type);
         } else {
             Uri uri = Uri.fromFile(file);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setDataAndType(uri,type);
         }
-
         context.startActivity(intent);
     }
 
@@ -60,62 +55,53 @@ public class FileUtil {
         switch (ext){
             case "apk":
                 return R.mipmap.ic_file_apk;
+            //压缩包
+            case "zip":
+            case "rar":
             case "tar":
             case "7z":
                 return R.mipmap.ic_file_archive;
-            case "asf":
-                return R.mipmap.ic_file_asf;
+            //视频
             case "avi":
-                return R.mipmap.ic_file_avi;
+            case "mp4":
+            case "mpeg":
+            case "mov":
+            case "wmv":
+                return R.mipmap.ic_file_video;
+            //音频
+            case "mp3":
+            case "wav":
+            case "wma":
+                return R.mipmap.ic_file_audio;
+            //图片
             case "bmp":
-                return R.mipmap.ic_file_bmp;
+            case "png":
+            case "jpg":
+            case "jpeg":
+            case "ico":
+            case "gif":
+                return R.mipmap.ic_file_pic;
+            //文本
+            case "txt":
+            case "log":
+                return R.mipmap.ic_file_txt;
+            //文档
             case "doc":
             case "docx":
                 return R.mipmap.ic_file_word;
-            case "gif":
-                return R.mipmap.ic_file_gif;
-            case "html":
-                return R.mipmap.ic_file_html;
-            case "ico":
-                return R.mipmap.ic_file_ico;
-            case "jpg":
-            case "jpeg":
-                return R.mipmap.ic_file_jpg;
-            case "log":
-                return R.mipmap.ic_file_log;
-            case "mov":
-                return R.mipmap.ic_file_mov;
-            case "mp3":
-                return R.mipmap.ic_file_mp3;
-            case "mp4":
-                return R.mipmap.ic_file_mp4;
-            case "mpeg":
-                return R.mipmap.ic_file_mpeg;
-            case "pdf":
-                return R.mipmap.ic_file_pdf;
-            case "png":
-                return R.mipmap.ic_file_png;
-            case "ppt":
-                return R.mipmap.ic_file_ppt;
-            case "rar":
-                return R.mipmap.ic_file_rar;
-            case "txt":
-                return R.mipmap.ic_file_txt;
-            case "vob":
-                return R.mipmap.ic_file_vob;
-            case "wav":
-                return R.mipmap.ic_file_wav;
-            case "wma":
-                return R.mipmap.ic_file_wma;
-            case "wmv":
-                return R.mipmap.ic_file_wmv;
             case "xls":
             case "xlsx":
-                return R.mipmap.ic_file_xls;
+                return R.mipmap.ic_file_excel;
+            case "ppt":
+            case "pptx":
+                return R.mipmap.ic_file_ppt;
+            case "pdf":
+                return R.mipmap.ic_file_pdf;
+            //代码
+            case "html":
             case "xml":
-                return R.mipmap.ic_file_xml;
-            case "zip":
-                return R.mipmap.ic_file_zip;
+                return R.mipmap.ic_file_code;
+            //默认
             case "":
             default:
                 return R.mipmap.ic_file_default;
@@ -126,13 +112,14 @@ public class FileUtil {
         switch (ext){
             //视频类
             case "mp4":
-            case "3gp":
                 return "video/*";
             //图片类
             case "png":
             case "jpg":
             case "jpeg":
                 return "image/*";
+            case "gif":
+                return "image/gif";
             //音频类
             case "mp3":
                 return "audio/*";
