@@ -1,19 +1,20 @@
 package com.tanyiqu.filesafe.utils;
 
-import android.util.Log;
+import android.content.Context;
+import android.os.Vibrator;
 
 import com.tanyiqu.filesafe.data.Data;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+
+import static android.content.Context.VIBRATOR_SERVICE;
 
 public class Util {
 
@@ -56,45 +57,7 @@ public class Util {
         return !name.contains("|");
     }
 
-    public static boolean copyFile(String oldPath$Name, String newPath$Name) {
-        try {
-            File oldFile = new File(oldPath$Name);
-            if (!oldFile.exists()) {
-                Log.e("--Method--", "copyFile:  oldFile not exist.");
-                return false;
-            } else if (!oldFile.isFile()) {
-                Log.e("--Method--", "copyFile:  oldFile not file.");
-                return false;
-            } else if (!oldFile.canRead()) {
-                Log.e("--Method--", "copyFile:  oldFile cannot read.");
-                return false;
-            }
-
-            /* 如果不需要打log，可以使用下面的语句
-            if (!oldFile.exists() || !oldFile.isFile() || !oldFile.canRead()) {
-                return false;
-            }
-            */
-
-            FileInputStream fileInputStream = new FileInputStream(oldPath$Name);
-            FileOutputStream fileOutputStream = new FileOutputStream(newPath$Name);
-            byte[] buffer = new byte[1024];
-            int byteRead;
-            while (-1 != (byteRead = fileInputStream.read(buffer))) {
-                fileOutputStream.write(buffer, 0, byteRead);
-            }
-            fileInputStream.close();
-            fileOutputStream.flush();
-            fileOutputStream.close();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public static void updateIni(File iniFile,String orName,String enName,long date,long size){
-
         try {
             FileWriter out = new FileWriter(iniFile,true);//追加
             BufferedWriter bw = new BufferedWriter(out);
@@ -107,8 +70,6 @@ public class Util {
             e.printStackTrace();
         }
     }
-
-
 
     //字节数转大小
     public static String byteToSize(long size) {
@@ -137,6 +98,13 @@ public class Util {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date data = new Date(millSec);
         return sdf.format(data);
+    }
+
+    public static void vibrate(Context context,long milliseconds){
+        Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            vibrator.vibrate(milliseconds);
+        }
     }
 
 }

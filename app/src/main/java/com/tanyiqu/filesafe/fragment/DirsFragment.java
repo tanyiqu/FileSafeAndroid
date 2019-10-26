@@ -122,7 +122,7 @@ public class DirsFragment extends Fragment {
     private void mkDir(Context context) {
         //弹出一个对话框
         final Dialog dialog = new Dialog(context, R.style.NormalDialogStyle);
-        View view = View.inflate(context, R.layout.layout_dialog, null);
+        View view = View.inflate(context, R.layout.layout_dialog_input, null);
         TextView dialog_cancel = view.findViewById(R.id.dialog_cancel);
         TextView dialog_conform = view.findViewById(R.id.dialog_conform);
         TextView tv_dialog_title = view.findViewById(R.id.tv_dialog_title);

@@ -9,10 +9,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,8 +46,10 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class FileSelectActivity extends Activity {
 
@@ -52,16 +57,17 @@ public class FileSelectActivity extends Activity {
     String currPath = Data.externalStoragePath;
     String parentPath = null;
     TextView tv_path;
+    //用于找到哪些是被选中的
+    FileAdapter adapter;
 
-    static Handler handler_single;
-    static Handler handler_muti;
+    //是否为多选模式
+    boolean isSelectMode = false;
 
-    final int MSG_COPY_RUNNING_S = 0x01;
-    final int MSG_COPY_FINISH_S = 0x02;
+    static Handler handler;
 
-    final int MSG_COPY_START_M = 0x03;
-    final int MSG_COPY_RUNNING_M = 0x04;
-    final int MSG_COPY_FINISH_M = 0x05;
+    final int MSG_COPY_START = 0x03;
+    final int MSG_COPY_RUNNING = 0x04;
+    final int MSG_COPY_FINISH = 0x05;
 
     //进度
     int prog = 0;
@@ -139,7 +145,7 @@ public class FileSelectActivity extends Activity {
         //合并
         Dirs.addAll(Files);
         //显示
-        FileAdapter adapter = new FileAdapter(Dirs);
+        adapter = new FileAdapter(Dirs);
         recycler.setAdapter(adapter);
         recycler.setLayoutAnimation(MainActivity.controller);
         //更新路径
@@ -162,17 +168,112 @@ public class FileSelectActivity extends Activity {
     private void initToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbar_file_select);
         toolbar.setTitle("选择文件");
-        toolbar.setSubtitle("长按选择文件夹");
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
+        //添加菜单按钮
+        toolbar.inflateMenu(R.menu.menu_select_file_toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.action_add_files:
+                        //获取已选择的文件列表
+                        final List<String> paths = adapter.getSelected();
+                        //如果没有选择文件，直接返回
+                        if(paths.size() == 0){
+                            Toast.makeText(FileSelectActivity.this, "请选择文件", Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
+                        //依次判断重复的文件
+                        List<String> repeat = new ArrayList<>();
+                        for(String path : paths){
+                            //截取名字
+                            String name = path.substring(path.lastIndexOf(File.separator) + 1);
+                            //判断名字是否重复
+                            if(fileIsExist(name)){
+                                repeat.add(name);
+                            }
+                        }
+                        //repeat里面的全部是重复的文件
+                        if(repeat.size() != 0){//有重复的文件
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("\"");
+                            sb.append(repeat.get(0));
+                            sb.append("\"\n");
+                            if(repeat.size() >= 2){
+                                sb.append("\"");
+                                sb.append(repeat.get(1));
+                                sb.append("\"...\n");
+                            }
+                            sb.append("等");
+                            sb.append(repeat.size());
+                            sb.append("个文件已存在");
+                            new AlertDialog.Builder(FileSelectActivity.this)
+                                    .setTitle("警告")
+                                    .setMessage(sb)
+                                    .setPositiveButton("确定",null)
+                                    .show();
+                            return false;
+                        }
+                        //现在paths里已经没有重复的文件了
+                        //弹出对话框确认加密
+                        new AlertDialog.Builder(FileSelectActivity.this)
+                                .setMessage("确定加密选择的" + paths.size() + "个文件")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //加密所选的文件
+                                        //构造加密文件列表
+                                        List<File> oldFiles = new ArrayList<>();
+                                        List<File> newFiles = new ArrayList<>();
+                                        for(String path : paths){
+                                            //构造old
+                                            File oldFile = new File(path);
+                                            //构造new
+                                            //随机一个不重复的文件名
+                                            File newFile = null;
+                                            String newFileName = null;
+                                            while (true){
+                                                newFileName = Util.RandomName();
+                                                newFile = new File(FilesFragment.path,newFileName);
+                                                //如果文件已存在，重新随机一个
+                                                if(!newFile.exists()){
+                                                    break;
+                                                }
+                                            }
+                                            oldFiles.add(oldFile);
+                                            newFiles.add(newFile);
+                                            //配置文件更新
+                                            Util.updateIni(new File(FilesFragment.path,"data.db"),
+                                                    oldFile.getName(),
+                                                    newFile.getName(),
+                                                    oldFile.lastModified(),
+                                                    oldFile.length());
+                                        }
+                                        copyDirDialog(FileSelectActivity.this,oldFiles,newFiles);
+                                    }
+                                })
+                                .setNegativeButton("取消",null)
+                                .show();
+
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     public void onBackPressed() {
+        //如果时多选模式，点击返回时退出多选模式
+        if(isSelectMode){
+            isSelectMode = false;
+            return;
+        }
         //如果没有上一级，默认返回
         if(currPath.equals(Data.externalStoragePath)){
             super.onBackPressed();
@@ -186,13 +287,21 @@ public class FileSelectActivity extends Activity {
 
     /**
      * Adapter
+     * 内部类
      */
     class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>{
 
         private List<FileInfo> adapterFiles;
+        //0未选中 1选中 2不可见
+        private Map<Integer,Boolean> checkStatus;
 
         FileAdapter(List<FileInfo> adapterFiles) {
             this.adapterFiles = adapterFiles;
+            checkStatus = new HashMap<>();
+            //默认都未选中
+            for(int i=0;i<adapterFiles.size();i++){
+                checkStatus.put(i,false);
+            }
         }
 
         @NonNull
@@ -203,38 +312,46 @@ public class FileSelectActivity extends Activity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
             final FileInfo item = adapterFiles.get(position);
             holder.img_files_logo.setImageDrawable(getDrawable(item.imgID));
             holder.tv_file_name.setText(item.name);
             holder.tv_file_size.setText(item.size);
             holder.tv_file_date.setText(item.date);
+            holder.checkBox.setOnCheckedChangeListener(null);
+
+            holder.checkBox.setVisibility(View.VISIBLE);
+            if(checkStatus.get(position)){
+                holder.checkBox.setChecked(true);
+            }else {
+                holder.checkBox.setChecked(false);
+            }
+            if(item.size.contains("项")){
+                holder.checkBox.setVisibility(View.GONE);
+            }
+            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(b){
+                        checkStatus.put(position,true);
+                    }else {
+                        checkStatus.put(position,false);
+                    }
+                }
+            });
             //点击事件
             holder.files_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if(item.size.contains("项")){
-//                        Toast.makeText(FileSelectActivity.this, "点击文件夹：" + item.name, Toast.LENGTH_SHORT).show();
                         enterDir(item.parent + File.separator + item.name);
                     }else {
-//                        Toast.makeText(FileSelectActivity.this, "点击：" + item.parent+ File.separator + item.name,Toast.LENGTH_SHORT).show();
-                        //加密此文件
-                        //弹出对话框，确定加密
-                        new AlertDialog.Builder(FileSelectActivity.this)
-                                .setTitle("加密")
-                                .setMessage(item.name)
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        if(fileIsExist(item.name)){//如果配置文件列表里面已经有此文件，直接返回
-                                            ToastUtil.errorToast(FileSelectActivity.this,"文件已存在！");
-                                            return;
-                                        }
-                                        encrypt_single(item.parent+ File.separator + item.name);
-                                    }
-                                })
-                                .setNegativeButton("取消",null)
-                                .show();
+                        //改变选中的状态
+                        if(holder.checkBox.isChecked()){
+                            holder.checkBox.setChecked(false);
+                        }else{
+                            holder.checkBox.setChecked(true);
+                        }
                     }
                 }
             });
@@ -252,7 +369,15 @@ public class FileSelectActivity extends Activity {
         public int getItemCount() {
             return this.adapterFiles.size();
         }
-
+        public List<String> getSelected(){
+            List<String> strings = new ArrayList<>();
+            for(int i=0;i<adapterFiles.size();i++){
+                if(checkStatus.get(i)){
+                    strings.add(adapterFiles.get(i).parent + File.separator + adapterFiles.get(i).name);
+                }
+            }
+            return strings;
+        }
         //Holder
         class ViewHolder extends RecyclerView.ViewHolder{
 
@@ -261,6 +386,7 @@ public class FileSelectActivity extends Activity {
             TextView tv_file_name;
             TextView tv_file_size;
             TextView tv_file_date;
+            CheckBox checkBox;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -269,10 +395,15 @@ public class FileSelectActivity extends Activity {
                 tv_file_name = itemView.findViewById(R.id.tv_file_name);
                 tv_file_size = itemView.findViewById(R.id.tv_file_size);
                 tv_file_date = itemView.findViewById(R.id.tv_file_date);
+                checkBox = itemView.findViewById(R.id.check);
             }
         }
     }
 
+    /**
+     * FileInfo
+     * 内部类
+     */
     class FileInfo{
         int imgID;
         String name;
@@ -307,106 +438,98 @@ public class FileSelectActivity extends Activity {
         return flag;
     }
 
-    //加密单个文件
-    public void encrypt_single(String enPath){
-        File orFile = new File(enPath);
-        //随机一个不重复的文件名
-        File enFile = null;
-        String enName = null;
-        while(true){
-            enName = Util.RandomName();
-            enFile = new File(FilesFragment.path,enName);
-            //文件不存在 则 跳出循环
-            if(!enFile.exists()){
-                break;
-            }
+    public void copyDirDialog(final Context context, final List<File> oldFiles, final List<File> newFiles){
+        if(oldFiles.size() == 0){
+            Toast.makeText(context, "空", Toast.LENGTH_SHORT).show();
+            return;
         }
-        //两个文件已经准备好
-        //复制文件到目标目录
-        // orFile -> enFile
-        copyFileDialog(FileSelectActivity.this,orFile,enFile);
-        //配置文件更新
-        Util.updateIni(new File(FilesFragment.path,"data.db"),orFile.getName(),enFile.getName(),orFile.lastModified(),orFile.length());
-    }
-
-    public boolean copyFileDialog(final Context context, final File oldFile, final File newFile) {
-        //检查参数
-        if (!oldFile.exists()) {
-            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (!oldFile.isFile()) {
-            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (!oldFile.canRead()) {
-            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        //弹出一个对话框
         final Dialog dialog = new Dialog(context, R.style.NormalDialogStyle);
-        View v = View.inflate(context, R.layout.layout_copy_file_dialog, null);
+        View v = View.inflate(context, R.layout.layout_dialog_copy, null);
         final ProgressBar bar = v.findViewById(R.id.progress_bar);
-        final TextView conform = v.findViewById(R.id.conform);
+        final TextView title  = v.findViewById(R.id.title);
+        final TextView tv_msg = v.findViewById(R.id.tv_msg);
         final TextView progress = v.findViewById(R.id.progress);
-        final TextView title = v.findViewById(R.id.title);
-        title.setText("正在复制..");
-        conform.setOnClickListener(new View.OnClickListener() {
+        final TextView confirm = v.findViewById(R.id.conform);
+        title.setText("正在复制");
+        confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                handler_single = null;
-//                finish();
-//                //刷新显示
-//                FilesFragment.refreshFileView_list(FilesFragment.path);
-//                FilesFragment.refreshFileView_screen();
+                handler = null;
+                finish();
+                //刷新显示
+                FilesFragment.refreshFileView_list(FilesFragment.path);
+                FilesFragment.refreshFileView_screen();
             }
         });
-        if(handler_single == null){
-            handler_single = new Handler(){
+        //Handler
+        if(handler == null){
+            handler = new Handler(){
                 @Override
                 public void handleMessage(@NonNull Message msg) {
                     super.handleMessage(msg);
-                    progress.setText(prog+"%");
-                    bar.setProgress(prog);
-                    if (msg.what == MSG_COPY_FINISH_S) {
-//                        Toast.makeText(context, "完成", Toast.LENGTH_SHORT).show();
-                        title.setText("复制完成");
-                        conform.setVisibility(View.VISIBLE);
+                    switch (msg.what){
+                        case MSG_COPY_START:
+                            tv_msg.setText("第"+curr+"/"+total+"个");
+                            break;
+                        case MSG_COPY_FINISH:
+                            Toast.makeText(context, "完成", Toast.LENGTH_SHORT).show();
+                            title.setText("复制完成");
+                            tv_msg.setText("");
+                            confirm.setVisibility(View.VISIBLE);
+                        case MSG_COPY_RUNNING:
+                            bar.setProgress(prog);
+                            progress.setText(prog+"%");
+                            break;
                     }
                 }
             };
         }
-        //开启线程复制文件
+        //Thread
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                prog = 0;
-                long m = oldFile.length();
-                long n = m/100;//一份的大小
-                long s = 0;
-                try {
-                    FileInputStream fis = new FileInputStream(oldFile);
-                    FileOutputStream fos = new FileOutputStream(newFile);
-                    byte[] buffer = new byte[1024];
-                    int byteRead;
-                    while(-1 != (byteRead = fis.read(buffer))){
-                        fos.write(buffer,0,byteRead);
-                        s += 1024;
-                        if(s >= n){
-                            handler_single.sendEmptyMessage(MSG_COPY_RUNNING_S);
-                            prog++;
-                            s = 0;
+                //循环复制文件
+                curr = 1;
+                for (int i=0;i<total;i++){
+                    //提示正在开始复制第几个
+                    handler.sendEmptyMessage(MSG_COPY_START);
+                    prog = 0;
+                    try {
+                        long m = oldFiles.get(i).length();
+                        int n = (int)(m/100);
+                        int s = 0;//每一份的进度
+                        FileInputStream fis = new FileInputStream(oldFiles.get(i));
+                        FileOutputStream fos = new FileOutputStream(newFiles.get(i));
+                        byte[] buffer = new byte[1024];
+                        int byteRead;
+                        while (-1 != (byteRead = fis.read(buffer))){
+                            fos.write(buffer,0,byteRead);
+                            s += 1024;
+                            if(s >= n){//进度+1
+                                handler.sendEmptyMessage(MSG_COPY_RUNNING);
+                                prog ++;
+                                s = 0;
+                            }
                         }
+                        fis.close();
+                        fos.flush();
+                        fos.close();
+                        //复制完成1个
+                        if(curr < total){
+                            curr++;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    fis.close();
-                    fos.flush();
-                    fos.close();
-                    prog = 100;
-                    handler_single.sendEmptyMessage(MSG_COPY_FINISH_S);
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+                prog = 100;
+                handler.sendEmptyMessage(MSG_COPY_FINISH);
             }
         });
+
+        total = oldFiles.size();
+
         // 设置自定义的布局
         dialog.setContentView(v);
         //使得点击对话框外部不消失对话框
@@ -427,7 +550,6 @@ public class FileSelectActivity extends Activity {
         }
         dialog.show();
         thread.start();
-        return true;
     }
 
 }

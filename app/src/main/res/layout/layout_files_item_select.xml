@@ -51,10 +51,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="7dp"
-        android:layout_marginEnd="11dp"
+        android:layout_marginEnd="10dp"
         android:text="2019/10/09 20:43:11"
         android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/check"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <View
@@ -64,5 +64,14 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <CheckBox
+        android:id="@+id/check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="5dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

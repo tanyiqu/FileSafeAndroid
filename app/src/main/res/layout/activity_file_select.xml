@@ -17,7 +17,7 @@
             android:id="@+id/toolbar_file_select"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorBlack"
+            android:background="@color/colorAccent"
             app:title="@string/app_name"
             app:titleTextColor="@color/colorActionBarTitle"
             app:navigationIcon="@drawable/ic_btn_back"

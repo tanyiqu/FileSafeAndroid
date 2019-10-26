@@ -13,6 +13,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.tanyiqu.filesafe.utils.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -259,7 +261,11 @@ public class NineLockView extends View {
     //当前手指按下的位置，是否在圆内
     private boolean isWithInCircle(float currX, float currY, int x, int y, float mRadius) {
         //如果点和圆心的距离 小于半径，则证明在圆内
-        return Math.sqrt(Math.pow(x - currX, 2) + Math.pow(y - currY, 2)) < mRadius;
+        if(Math.sqrt(Math.pow(x - currX, 2) + Math.pow(y - currY, 2)) < mRadius){
+//            Util.vibrate(getContext(),10);
+            return true;
+        }
+        return false;
     }
 
     //刷新视图

@@ -18,6 +18,7 @@ import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.fragment.DirsFragment;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
+import com.tanyiqu.filesafe.utils.Util;
 import com.tanyiqu.filesafe.view.NineLockView;
 
 import java.io.BufferedReader;
@@ -135,10 +136,7 @@ public class PasswdActivity extends Activity {
                             //密码错误
                             ToastUtil.errorToast(PasswdActivity.this,"密码错误");
                             //震动一下
-                            Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                            if (vibrator != null) {
-                                vibrator.vibrate(100);
-                            }
+                            Util.vibrate(PasswdActivity.this,100);
                             nineLockView.setWrong();
                             nineLockView.refreshView(false);
                         }

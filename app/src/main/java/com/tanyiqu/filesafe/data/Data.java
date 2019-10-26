@@ -44,7 +44,7 @@ public class Data {
 
     public static void setInternalStoragePath(String internalStoragePath) {
         Data.internalStoragePath = internalStoragePath;
-        Log.i("MyApp","已配置 internalStoragePath：" + Data.internalStoragePath);
+//        Log.i("MyApp","已配置 internalStoragePath：" + Data.internalStoragePath);
     }
 
     public static void setFilesPath(String filesPath) {
