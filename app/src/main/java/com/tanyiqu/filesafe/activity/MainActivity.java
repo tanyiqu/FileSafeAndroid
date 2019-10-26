@@ -1,10 +1,10 @@
 package com.tanyiqu.filesafe.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
@@ -17,10 +17,7 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.tanyiqu.filesafe.R;
-import com.tanyiqu.filesafe.fragment.AboutFragment;
 import com.tanyiqu.filesafe.fragment.DirsFragment;
-import com.tanyiqu.filesafe.fragment.FilesFragment;
-import com.tanyiqu.filesafe.fragment.SettingFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -71,18 +68,10 @@ public class MainActivity extends AppCompatActivity {
                 drawer.closeDrawers();
                 switch (menuItem.getItemId()){
                     case R.id.action_setting:   //设置页面
-                        fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
-                                .replace(R.id.fragment_container,new SettingFragment())
-                                .addToBackStack(null)
-                                .commit();
+                        startActivity(new Intent(MainActivity.this,SettingActivity.class));
                         break;
                     case R.id.action_about:     //关于页面
-                        fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.anim_fragment_bottom_in, R.anim.anim_fragment_top_out, R.anim.anim_fragment_top_in, R.anim.anim_fragment_bottom_out)
-                                .replace(R.id.fragment_container,new AboutFragment())
-                                .addToBackStack(null)
-                                .commit();
+                        startActivity(new Intent(MainActivity.this,AboutActivity.class));
                         break;
                 }
                 return true;

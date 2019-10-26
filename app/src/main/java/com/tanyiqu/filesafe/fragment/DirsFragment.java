@@ -3,6 +3,7 @@ package com.tanyiqu.filesafe.fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,7 +34,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tanyiqu.filesafe.R;
+import com.tanyiqu.filesafe.activity.AboutActivity;
 import com.tanyiqu.filesafe.activity.MainActivity;
+import com.tanyiqu.filesafe.activity.SettingActivity;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
@@ -90,18 +93,10 @@ public class DirsFragment extends Fragment {
                         mkDir(toolbar.getContext());
                         break;
                     case R.id.action_setting://设置界面
-                        MainActivity.fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.anim_fragment_bottom_in, R.anim.anim_fragment_top_out, R.anim.anim_fragment_top_in, R.anim.anim_fragment_bottom_out)
-                                .replace(R.id.fragment_container,new SettingFragment())
-                                .addToBackStack(null)
-                                .commit();
+                        startActivity(new Intent(getActivity(), SettingActivity.class));
                         break;
                     case R.id.action_about://关于界面
-                        MainActivity.fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
-                                .replace(R.id.fragment_container,new AboutFragment())
-                                .addToBackStack(null)
-                                .commit();
+                        startActivity(new Intent(getActivity(), AboutActivity.class));
                         break;
                     default:
                         break;
