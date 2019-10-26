@@ -57,8 +57,16 @@
         <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 
-    <!--主题-->
-
+    <!--复制文件对话框的主题-->
+    <style name="progressHorizontalStyle" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:indeterminateOnly">false</item>
+        <!--进度条的进度颜色drawable文件-->
+        <item name="android:progressDrawable">@drawable/shape_progress_bar</item>
+        <!--进度条的最小高度-->
+        <item name="android:minHeight">17dp</item>
+        <!--进度条的最大高度-->
+        <item name="android:maxHeight">17dp</item>
+    </style>
     <!--主题-->
 
 </resources>

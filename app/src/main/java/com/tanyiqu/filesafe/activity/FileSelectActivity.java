@@ -1,12 +1,20 @@
 package com.tanyiqu.filesafe.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,11 +29,14 @@ import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.fragment.FilesFragment;
 import com.tanyiqu.filesafe.utils.FileUtil;
+import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
 import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.Collator;
@@ -42,6 +53,22 @@ public class FileSelectActivity extends Activity {
     String parentPath = null;
     TextView tv_path;
 
+    static Handler handler_single;
+    static Handler handler_muti;
+
+    final int MSG_COPY_RUNNING_S = 0x01;
+    final int MSG_COPY_FINISH_S = 0x02;
+
+    final int MSG_COPY_START_M = 0x03;
+    final int MSG_COPY_RUNNING_M = 0x04;
+    final int MSG_COPY_FINISH_M = 0x05;
+
+    //进度
+    int prog = 0;
+    //复制文件夹时的当前个数
+    int curr = 1;
+    //复制文件夹时的总数
+    int total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +176,8 @@ public class FileSelectActivity extends Activity {
         //如果没有上一级，默认返回
         if(currPath.equals(Data.externalStoragePath)){
             super.onBackPressed();
+            FilesFragment.refreshFileView_list(FilesFragment.path);
+            FilesFragment.refreshFileView_screen();
         }else{
             //返回上一级
             enterDir(parentPath);
@@ -201,11 +230,7 @@ public class FileSelectActivity extends Activity {
                                             ToastUtil.errorToast(FileSelectActivity.this,"文件已存在！");
                                             return;
                                         }
-                                        encrypt(item.parent+ File.separator + item.name);
-                                        finish();
-                                        //刷新显示
-                                        FilesFragment.refreshFileView_list(FilesFragment.path);
-                                        FilesFragment.refreshFileView_screen();
+                                        encrypt_single(item.parent+ File.separator + item.name);
                                     }
                                 })
                                 .setNegativeButton("取消",null)
@@ -259,7 +284,7 @@ public class FileSelectActivity extends Activity {
     //判断文件在配置文件里是否已经存在
     //隐含条件：FilesFragment.path 为当前进入的目录
     public boolean fileIsExist(String name){
-        Toast.makeText(this, FilesFragment.path, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, FilesFragment.path, Toast.LENGTH_SHORT).show();
         String iniPath = FilesFragment.path + File.separator + "data.db";
         File iniFile = new File(iniPath);
         boolean flag = false;
@@ -283,7 +308,7 @@ public class FileSelectActivity extends Activity {
     }
 
     //加密单个文件
-    public void encrypt(String enPath){
+    public void encrypt_single(String enPath){
         File orFile = new File(enPath);
         //随机一个不重复的文件名
         File enFile = null;
@@ -296,11 +321,113 @@ public class FileSelectActivity extends Activity {
                 break;
             }
         }
+        //两个文件已经准备好
         //复制文件到目标目录
         // orFile -> enFile
-        Util.copyFile(orFile.getPath(),enFile.getPath());
+        copyFileDialog(FileSelectActivity.this,orFile,enFile);
         //配置文件更新
         Util.updateIni(new File(FilesFragment.path,"data.db"),orFile.getName(),enFile.getName(),orFile.lastModified(),orFile.length());
+    }
+
+    public boolean copyFileDialog(final Context context, final File oldFile, final File newFile) {
+        //检查参数
+        if (!oldFile.exists()) {
+            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (!oldFile.isFile()) {
+            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (!oldFile.canRead()) {
+            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        //弹出一个对话框
+        final Dialog dialog = new Dialog(context, R.style.NormalDialogStyle);
+        View v = View.inflate(context, R.layout.layout_copy_file_dialog, null);
+        final ProgressBar bar = v.findViewById(R.id.progress_bar);
+        final TextView conform = v.findViewById(R.id.conform);
+        final TextView progress = v.findViewById(R.id.progress);
+        final TextView title = v.findViewById(R.id.title);
+        title.setText("正在复制..");
+        conform.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                handler_single = null;
+//                finish();
+//                //刷新显示
+//                FilesFragment.refreshFileView_list(FilesFragment.path);
+//                FilesFragment.refreshFileView_screen();
+            }
+        });
+        if(handler_single == null){
+            handler_single = new Handler(){
+                @Override
+                public void handleMessage(@NonNull Message msg) {
+                    super.handleMessage(msg);
+                    progress.setText(prog+"%");
+                    bar.setProgress(prog);
+                    if (msg.what == MSG_COPY_FINISH_S) {
+//                        Toast.makeText(context, "完成", Toast.LENGTH_SHORT).show();
+                        title.setText("复制完成");
+                        conform.setVisibility(View.VISIBLE);
+                    }
+                }
+            };
+        }
+        //开启线程复制文件
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                prog = 0;
+                long m = oldFile.length();
+                long n = m/100;//一份的大小
+                long s = 0;
+                try {
+                    FileInputStream fis = new FileInputStream(oldFile);
+                    FileOutputStream fos = new FileOutputStream(newFile);
+                    byte[] buffer = new byte[1024];
+                    int byteRead;
+                    while(-1 != (byteRead = fis.read(buffer))){
+                        fos.write(buffer,0,byteRead);
+                        s += 1024;
+                        if(s >= n){
+                            handler_single.sendEmptyMessage(MSG_COPY_RUNNING_S);
+                            prog++;
+                            s = 0;
+                        }
+                    }
+                    fis.close();
+                    fos.flush();
+                    fos.close();
+                    prog = 100;
+                    handler_single.sendEmptyMessage(MSG_COPY_FINISH_S);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        // 设置自定义的布局
+        dialog.setContentView(v);
+        //使得点击对话框外部不消失对话框
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        //设置对话框的大小
+        v.setMinimumHeight((int) (ScreenSizeUtil.getScreenHeight(context) * 0.15f));
+        Window dialogWindow = dialog.getWindow();
+        WindowManager.LayoutParams lp;
+        if (dialogWindow != null) {
+            lp = dialogWindow.getAttributes();
+            if (lp != null) {
+                lp.width = (int) (ScreenSizeUtil.getScreenWidth(context) * 0.88);
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                lp.gravity = Gravity.CENTER;
+            }
+            dialogWindow.setAttributes(lp);
+        }
+        dialog.show();
+        thread.start();
+        return true;
     }
 
 }
