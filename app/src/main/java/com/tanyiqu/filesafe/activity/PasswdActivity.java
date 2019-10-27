@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -293,7 +292,7 @@ public class PasswdActivity extends Activity {
     private void initDirsView() {
         //使用配置文件初始化
         List<DirsFragment.DirView> dirViewList = new ArrayList<DirsFragment.DirView>();
-        DirsFragment.refreshDirs();
+        DirsFragment.refreshDirs_list();
     }
 
     public void goMain(){

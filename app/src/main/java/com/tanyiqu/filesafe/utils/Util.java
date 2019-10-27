@@ -1,8 +1,14 @@
 package com.tanyiqu.filesafe.utils;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Vibrator;
+import android.view.Gravity;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
+import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 
 import java.io.BufferedWriter;
@@ -45,7 +51,9 @@ public class Util {
         return sb.toString();
     }
 
+    //合法就 return true
     public static boolean checkFileName(String name){
+        if(name.charAt(0) == '.') { return false;}
         if(name.contains("\\")){ return false;}
         if(name.contains("/")){ return false;}
         if(name.contains(":")){ return false;}
@@ -105,6 +113,24 @@ public class Util {
         if (vibrator != null) {
             vibrator.vibrate(milliseconds);
         }
+    }
+
+    public static Dialog inputDialog(Context context){
+        Dialog dialog = new Dialog(context, R.style.NormalDialogStyle);
+        //使得点击对话框外部不消失对话框
+        dialog.setCanceledOnTouchOutside(true);
+        Window dialogWindow = dialog.getWindow();
+        WindowManager.LayoutParams lp;
+        if (dialogWindow != null) {
+            lp = dialogWindow.getAttributes();
+            if (lp != null) {
+                lp.width = (int) (ScreenSizeUtil.getScreenWidth(context) * 0.88);
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                lp.gravity = Gravity.CENTER;
+            }
+            dialogWindow.setAttributes(lp);
+        }
+        return dialog;
     }
 
 }
