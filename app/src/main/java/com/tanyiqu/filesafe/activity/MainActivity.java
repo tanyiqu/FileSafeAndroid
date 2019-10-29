@@ -69,9 +69,11 @@ public class MainActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()){
                     case R.id.action_setting:   //设置页面
                         startActivity(new Intent(MainActivity.this,SettingActivity.class));
+                        overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
                         break;
                     case R.id.action_about:     //关于页面
                         startActivity(new Intent(MainActivity.this,AboutActivity.class));
+                        overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
                         break;
                 }
                 return true;

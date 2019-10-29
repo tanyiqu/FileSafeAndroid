@@ -97,9 +97,11 @@ public class DirsFragment extends Fragment {
                         break;
                     case R.id.action_setting://设置界面
                         startActivity(new Intent(getActivity(), SettingActivity.class));
+                        getActivity().overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
                         break;
                     case R.id.action_about://关于界面
                         startActivity(new Intent(getActivity(), AboutActivity.class));
+                        getActivity().overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
                         break;
                     default:
                         break;

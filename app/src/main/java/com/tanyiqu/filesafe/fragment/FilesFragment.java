@@ -1,6 +1,5 @@
 package com.tanyiqu.filesafe.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -71,6 +70,7 @@ public class FilesFragment extends Fragment {
                 //调用文件选择器，选择文件进行加密
                 Intent intent = new Intent(getActivity(),FileSelectActivity.class);
                 startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
             }
         });
     }

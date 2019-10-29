@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="animFragmentJumpDuration">400</integer>
+    <integer name="animPageJumpDuration">400</integer>
     <integer name="animRecyclerShowDuration">100</integer>
 </resources>

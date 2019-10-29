@@ -33,7 +33,6 @@ import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.fragment.FilesFragment;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
-import com.tanyiqu.filesafe.utils.ToastUtil;
 import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.BufferedReader;
@@ -277,6 +276,7 @@ public class FileSelectActivity extends Activity {
         //如果没有上一级，默认返回
         if(currPath.equals(Data.externalStoragePath)){
             super.onBackPressed();
+            overridePendingTransition(R.anim.anim_page_jump_3,R.anim.anim_page_jump_4);
             FilesFragment.refreshFileView_list(FilesFragment.path);
             FilesFragment.refreshFileView_screen();
         }else{
@@ -457,6 +457,7 @@ public class FileSelectActivity extends Activity {
                 dialog.dismiss();
                 handler = null;
                 finish();
+                overridePendingTransition(R.anim.anim_page_jump_3,R.anim.anim_page_jump_4);
                 //刷新显示
                 FilesFragment.refreshFileView_list(FilesFragment.path);
                 FilesFragment.refreshFileView_screen();
