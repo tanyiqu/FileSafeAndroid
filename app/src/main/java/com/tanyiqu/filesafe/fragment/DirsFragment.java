@@ -225,7 +225,8 @@ public class DirsFragment extends Fragment {
                 if(d.isDirectory() && !d.isHidden()){
                     //用 封面和名字 构造
                     String name = d.getName();
-                    dirViewList.add(new DirView(d.getPath() + "/cover.jpg",name));
+                    String count = (d.listFiles().length-2) + "";
+                    dirViewList.add(new DirView(d.getPath() + File.separator + "cover.jpg",name,count));
                 }
             }
         }
@@ -281,14 +282,16 @@ public class DirsFragment extends Fragment {
         class ViewHolder extends RecyclerView.ViewHolder{
             CardView dirs_item;
             ImageView img_dirs_item;
-            TextView tv_dirs_content;
+            TextView tv_dirs_name;
+            TextView tv_dirs_count;
             String path;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 this.dirs_item = itemView.findViewById(R.id.dirs_item);
                 this.img_dirs_item = itemView.findViewById(R.id.img_dirs_item);
-                this.tv_dirs_content = itemView.findViewById(R.id.tv_dirs_content);
+                this.tv_dirs_name = itemView.findViewById(R.id.tv_dirs_name);
+                this.tv_dirs_count = itemView.findViewById(R.id.tv_dirs_count);
             }
         }
 
@@ -308,7 +311,9 @@ public class DirsFragment extends Fragment {
             Bitmap bmp= BitmapFactory.decodeFile(item.coverPath);
             holder.img_dirs_item.setImageBitmap(bmp);
             //内容
-            holder.tv_dirs_content.setText(item.name);
+            holder.tv_dirs_name.setText(item.name);
+            //数目
+            holder.tv_dirs_count.setText("（"+item.count+"项）");
             //路径
             holder.path = Data.externalStoragePath + File.separator + ".file_safe" + File.separator  + "files" + File.separator + item.name;
 
@@ -496,11 +501,14 @@ public class DirsFragment extends Fragment {
         public String coverPath;
         //内容
         public String name;
+        //包含多少项
+        public String count;
 
         //图片路径、内容
-        public DirView(String coverPath,String name){
+        public DirView(String coverPath,String name,String count){
             this.coverPath = coverPath;
             this.name = name;
+            this.count = count;
         }
     }
 
