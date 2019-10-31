@@ -253,6 +253,8 @@ public class DirsFragment extends Fragment {
         MainActivity.neededDoubleClickToExit = true;
         //解锁抽屉滑动
         MainActivity.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        refreshDirs_list();
+        refreshDirs_screen();
     }
 
     @Override
