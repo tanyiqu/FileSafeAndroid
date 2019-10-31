@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -53,12 +54,17 @@ import java.util.Map;
 public class FileSelectActivity extends Activity {
 
     RecyclerView recycler;
+    LinearLayoutManager layoutManager;
     String currPath = Data.externalStoragePath;
     String parentPath = null;
     TextView tv_path;
     //用于找到哪些是被选中的
     FileAdapter adapter;
-
+    //记录当前在第几层
+    int floor = 1;
+    //记录所有层的第一个view的位置和偏移
+    int[] positions = new int[100];
+    int[] offset = new int[100];
     //是否为多选模式
     boolean isSelectMode = false;
 
@@ -92,12 +98,13 @@ public class FileSelectActivity extends Activity {
         tv_path = findViewById(R.id.tv_path);
 
         //默认先进入根目录
-        enterDir(currPath);
+        enterDir(currPath,false);
         currPath = Data.externalStoragePath;
         parentPath = null;
     }
 
-    private void enterDir(String dirPath) {
+    private void enterDir(String dirPath,boolean  isBack) {
+        Log.i("MyApp","第"+floor+"层");
         File dir = new File(dirPath);
         File[] files = dir.listFiles();
         assert files != null;
@@ -146,7 +153,13 @@ public class FileSelectActivity extends Activity {
         //显示
         adapter = new FileAdapter(Dirs);
         recycler.setAdapter(adapter);
-        recycler.setLayoutAnimation(MainActivity.controller);
+
+        //是返回操作就回到上次位置
+        if(isBack){
+            layoutManager.scrollToPositionWithOffset(positions[floor],offset[floor]);
+        }else {//不是返回操作才设置动画效果
+            recycler.setLayoutAnimation(MainActivity.controller);
+        }
         //更新路径
         currPath = dirPath;
         if(currPath.equals(Data.externalStoragePath)){
@@ -160,8 +173,23 @@ public class FileSelectActivity extends Activity {
 
     private void initRecycler() {
         recycler = findViewById(R.id.recycler_file_select);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
+        layoutManager = new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
         recycler.setLayoutManager(layoutManager);
+
+        recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+//                Log.i("MyApp","滑动");
+                //当前为第floor层
+                //记录偏移
+                View firstView = layoutManager.getChildAt(0);
+                if(firstView != null){
+                    offset[floor] = firstView.getTop();
+                    positions[floor] = layoutManager.getPosition(firstView);
+                }
+            }
+        });
     }
 
     private void initToolBar() {
@@ -281,7 +309,8 @@ public class FileSelectActivity extends Activity {
             FilesFragment.refreshFileView_screen();
         }else{
             //返回上一级
-            enterDir(parentPath);
+            floor--;
+            enterDir(parentPath,true);
         }
     }
 
@@ -344,7 +373,8 @@ public class FileSelectActivity extends Activity {
                 @Override
                 public void onClick(View view) {
                     if(item.size.contains("项")){
-                        enterDir(item.parent + File.separator + item.name);
+                        floor++;
+                        enterDir(item.parent + File.separator + item.name,false);
                     }else {
                         //改变选中的状态
                         if(holder.checkBox.isChecked()){
