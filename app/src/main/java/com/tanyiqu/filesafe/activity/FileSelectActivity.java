@@ -31,7 +31,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
-import com.tanyiqu.filesafe.fragment.FilesFragment;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
 import com.tanyiqu.filesafe.utils.Util;
@@ -104,7 +103,6 @@ public class FileSelectActivity extends Activity {
     }
 
     private void enterDir(String dirPath,boolean  isBack) {
-        Log.i("MyApp","第"+floor+"层");
         File dir = new File(dirPath);
         File[] files = dir.listFiles();
         assert files != null;
@@ -158,7 +156,7 @@ public class FileSelectActivity extends Activity {
         if(isBack){
             layoutManager.scrollToPositionWithOffset(positions[floor],offset[floor]);
         }else {//不是返回操作才设置动画效果
-            recycler.setLayoutAnimation(MainActivity.controller);
+            recycler.setLayoutAnimation(DirsActivity.controller);
         }
         //更新路径
         currPath = dirPath;
@@ -266,7 +264,7 @@ public class FileSelectActivity extends Activity {
                                             String newFileName = null;
                                             while (true){
                                                 newFileName = Util.RandomName();
-                                                newFile = new File(FilesFragment.path,newFileName);
+                                                newFile = new File(FilesActivity.path,newFileName);
                                                 //如果文件已存在，重新随机一个
                                                 if(!newFile.exists()){
                                                     break;
@@ -275,7 +273,7 @@ public class FileSelectActivity extends Activity {
                                             oldFiles.add(oldFile);
                                             newFiles.add(newFile);
                                             //配置文件更新
-                                            Util.updateIni(new File(FilesFragment.path,"data.db"),
+                                            Util.updateIni(new File(FilesActivity.path,"data.db"),
                                                     oldFile.getName(),
                                                     newFile.getName(),
                                                     oldFile.lastModified(),
@@ -305,8 +303,7 @@ public class FileSelectActivity extends Activity {
         if(currPath.equals(Data.externalStoragePath)){
             super.onBackPressed();
             overridePendingTransition(R.anim.anim_page_jump_3,R.anim.anim_page_jump_4);
-            FilesFragment.refreshFileView_list(FilesFragment.path);
-            FilesFragment.refreshFileView_screen();
+            FilesActivity.refreshFileView_list(FilesActivity.path);
         }else{
             //返回上一级
             floor--;
@@ -443,10 +440,9 @@ public class FileSelectActivity extends Activity {
     }
 
     //判断文件在配置文件里是否已经存在
-    //隐含条件：FilesFragment.path 为当前进入的目录
+    //隐含条件：FilesActivity.path 为当前进入的目录
     public boolean fileIsExist(String name){
-//        Toast.makeText(this, FilesFragment.path, Toast.LENGTH_SHORT).show();
-        String iniPath = FilesFragment.path + File.separator + "data.db";
+        String iniPath = FilesActivity.path + File.separator + "data.db";
         File iniFile = new File(iniPath);
         boolean flag = false;
         //检索是否出现 name
@@ -489,8 +485,7 @@ public class FileSelectActivity extends Activity {
                 finish();
                 overridePendingTransition(R.anim.anim_page_jump_3,R.anim.anim_page_jump_4);
                 //刷新显示
-                FilesFragment.refreshFileView_list(FilesFragment.path);
-                FilesFragment.refreshFileView_screen();
+                FilesActivity.refreshFileView_list(FilesActivity.path);
             }
         });
         //Handler

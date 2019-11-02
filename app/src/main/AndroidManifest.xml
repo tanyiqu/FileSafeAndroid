@@ -38,14 +38,17 @@
         <activity android:name=".activity.PermissionActivity" />
         <activity android:name=".activity.PasswdActivity" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.DirsActivity"
             android:theme="@style/ToolBarTheme" />
         <activity
             android:name=".activity.FileSelectActivity"
             android:theme="@style/ToolBarTheme" />
         <activity
-            android:name=".activity.SettingActivity"
+            android:name=".activity.FilesActivity"
             android:theme="@style/ToolBarTheme"/>
+        <activity
+            android:name=".activity.SettingActivity"
+            android:theme="@style/ToolBarTheme" />
         <activity
             android:name=".activity.AboutActivity"
             android:theme="@style/ToolBarTheme" />

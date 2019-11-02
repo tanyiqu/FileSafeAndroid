@@ -1,5 +1,7 @@
-package com.tanyiqu.filesafe.fragment;
+package com.tanyiqu.filesafe.activity;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,20 +25,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.tanyiqu.filesafe.R;
-import com.tanyiqu.filesafe.activity.AboutActivity;
-import com.tanyiqu.filesafe.activity.MainActivity;
-import com.tanyiqu.filesafe.activity.SettingActivity;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
@@ -54,33 +57,58 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class DirsFragment extends Fragment {
+public class DirsActivity extends AppCompatActivity {
 
-    public static RecyclerView recycler = null;
+    private static long exitTime = 0;
+    public static DrawerLayout drawer;
+    public static FragmentManager fragmentManager;
+    public static boolean neededDoubleClickToExit = true;
+    static RecyclerView recycler;
     static DirsAdapter adapter;
-
-    @Nullable
+    public static LayoutAnimationController controller;//用作子fragment中的recycler动画
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_dirs,container,false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dirs);
+        init();
+    }
+
+    private void init() {
+        //初始化各种值
+        drawer = findViewById(R.id.drawer);
 
         //初始化ToolBar
-        initToolBar(root);
-        //初始化RecyclerView
-        initRecycler(root);
-        return root;
+        initToolBar();
+
+        fragmentManager = getSupportFragmentManager();
+
+        controller = new LayoutAnimationController(AnimationUtils.loadAnimation(this,R.anim.anim_files_show));
+
+        //初始化侧滑菜单
+        initNavigationView();
+
+        initRecycler();
 
     }
 
-    private void initToolBar(final View root) {
-        final Toolbar toolbar = root.findViewById(R.id.toolbar_dirs);
+    private void initRecycler() {
+        recycler = findViewById(R.id.recycler_dirs);
+        GridLayoutManager layoutManager = new GridLayoutManager(DirsActivity.this,2);
+        recycler.setLayoutManager(layoutManager);
+        adapter = new DirsAdapter(Data.dirViewList);
+        recycler.setAdapter(adapter);
+
+    }
+
+    private void initToolBar() {
+        final Toolbar toolbar = findViewById(R.id.toolbar_dirs);
         //设置标题
         toolbar.setTitle("保险箱");
         //设置导航Button点击事件
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.drawer.openDrawer(GravityCompat.START);
+                DirsActivity.drawer.openDrawer(GravityCompat.START);
             }
         });
         //设置移除更多选项图片  如果不设置会默认使用系统灰色的图标
@@ -96,12 +124,12 @@ public class DirsFragment extends Fragment {
                         mkDir(toolbar.getContext());
                         break;
                     case R.id.action_setting://设置界面
-                        startActivity(new Intent(getActivity(), SettingActivity.class));
-                        getActivity().overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
+                        startActivity(new Intent(DirsActivity.this, SettingActivity.class));
+                        overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
                         break;
                     case R.id.action_about://关于界面
-                        startActivity(new Intent(getActivity(), AboutActivity.class));
-                        getActivity().overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
+                        startActivity(new Intent(DirsActivity.this, AboutActivity.class));
+                        overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
                         break;
                     default:
                         break;
@@ -111,10 +139,55 @@ public class DirsFragment extends Fragment {
         });
     }
 
-    private void initRecycler(View root) {
-        recycler = root.findViewById(R.id.recycler_dirs);
-        GridLayoutManager layoutManager = new GridLayoutManager(root.getContext(),2);
-        recycler.setLayoutManager(layoutManager);
+    //初始化侧滑菜单
+    private void initNavigationView() {
+        NavigationView navigation = findViewById(R.id.navigation);
+        navigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                drawer.closeDrawers();
+                switch (menuItem.getItemId()){
+                    case R.id.action_setting:   //设置页面
+                        startActivity(new Intent(DirsActivity.this,SettingActivity.class));
+                        overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
+                        break;
+                    case R.id.action_about:     //关于页面
+                        startActivity(new Intent(DirsActivity.this,AboutActivity.class));
+                        overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+
+    //根据配置文件夹 刷新
+    public static void refreshDirs_list(){
+        List<DirView> dirViewList = new ArrayList<DirView>();
+        //列出files文件夹的所有 文件夹
+        File dir = new File(Data.externalStoragePath + "/.file_safe/files");
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for(File d : files){//遍历列出的文件夹
+                if(d.isDirectory() && !d.isHidden()){
+                    //用 封面和名字 构造
+                    String name = d.getName();
+                    String count = (d.listFiles().length-2) + "";
+                    dirViewList.add(new DirView(d.getPath() + File.separator + "cover.jpg",name,count));
+                }
+            }
+        }
+        //按名字排序
+        Comparator<DirView> comparator = new Comparator<DirView>() {
+            @Override
+            public int compare(DirView l, DirView r) {
+                return Collator.getInstance(Locale.CHINESE).compare(l.name,r.name);
+            }
+        };
+        Collections.sort(dirViewList,comparator);
+        Data.setDirViewList(dirViewList);
+    }
+    public void refreshDirs_screen(){
         adapter = new DirsAdapter(Data.dirViewList);
         recycler.setAdapter(adapter);
     }
@@ -122,27 +195,27 @@ public class DirsFragment extends Fragment {
     private void mkDir(Context context) {
         final Dialog dialog = Util.inputDialog(context);
         View view = View.inflate(context, R.layout.layout_dialog_input, null);
-        TextView dialog_cancel = view.findViewById(R.id.dialog_cancel);
-        TextView dialog_conform = view.findViewById(R.id.dialog_conform);
-        TextView tv_dialog_title = view.findViewById(R.id.tv_dialog_title);
-        tv_dialog_title.setText("新建目录");
-        dialog_conform.setText("新建");
-        final EditText edit_dir_name = view.findViewById(R.id.edit_dir_name);
+        TextView cancel = view.findViewById(R.id.dialog_cancel);
+        TextView conform = view.findViewById(R.id.dialog_conform);
+        TextView title = view.findViewById(R.id.tv_dialog_title);
+        title.setText("新建目录（名字别太长>_<）");
+        conform.setText("新建");
+        final EditText name = view.findViewById(R.id.edit_dir_name);
         //设置对话框的大小
         view.setMinimumHeight((int) (ScreenSizeUtil.getScreenHeight(context) * 0.2f));
         //取消按钮
-        dialog_cancel.setOnClickListener(new View.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
             }
         });
         //新建按钮
-        dialog_conform.setOnClickListener(new View.OnClickListener() {
+        conform.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //获取目录名并去掉多余空格
-                String dirName = edit_dir_name.getText().toString().trim();
+                String dirName = name.getText().toString().trim();
                 //如果名字为空，不理他
                 if (dirName.equals("")) {
                     return;
@@ -194,8 +267,8 @@ public class DirsFragment extends Fragment {
                 }
                 dialog.dismiss();
                 //刷新显示
-                DirsFragment.refreshDirs_list();
-                DirsFragment.refreshDirs_screen();
+                DirsActivity.refreshDirs_list();
+                refreshDirs_screen();
                 ToastUtil.myToast(view.getContext(), "新建成功！");
             }
         });
@@ -203,150 +276,86 @@ public class DirsFragment extends Fragment {
         dialog.setContentView(view);
         dialog.show();
         //弹出输入法
-        edit_dir_name.requestFocus();
+        name.requestFocus();
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                InputMethodManager imm = (InputMethodManager) edit_dir_name.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(edit_dir_name,InputMethodManager.SHOW_IMPLICIT);
+                InputMethodManager imm = (InputMethodManager) name.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(name,InputMethodManager.SHOW_IMPLICIT);
+                }
             }
         },150);
     }
 
-    //根据配置文件夹 刷新
-    public static void refreshDirs_list(){
-        List<DirView> dirViewList = new ArrayList<DirView>();
-        //列出files文件夹的所有 文件夹
-        File dir = new File(Data.externalStoragePath + "/.file_safe/files");
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for(File d : files){//遍历列出的文件夹
-                if(d.isDirectory() && !d.isHidden()){
-                    //用 封面和名字 构造
-                    String name = d.getName();
-                    String count = (d.listFiles().length-2) + "";
-                    dirViewList.add(new DirView(d.getPath() + File.separator + "cover.jpg",name,count));
-                }
-            }
-        }
-        //按名字排序
-        Comparator<DirView> comparator = new Comparator<DirView>() {
-            @Override
-            public int compare(DirView l, DirView r) {
-                return Collator.getInstance(Locale.CHINESE).compare(l.name,r.name);
-            }
-        };
-        Collections.sort(dirViewList,comparator);
-        Data.setDirViewList(dirViewList);
-    }
-
-    public static void refreshDirs_screen(){
-        adapter = new DirsAdapter(Data.dirViewList);
-        recycler.setAdapter(adapter);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //需要两次点击返回
-        MainActivity.neededDoubleClickToExit = true;
-        //解锁抽屉滑动
-        MainActivity.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        refreshDirs_list();
-        refreshDirs_screen();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        //不需要两次点击返回
-        MainActivity.neededDoubleClickToExit = false;
-        //锁定抽屉滑动
-        MainActivity.drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-    }
 
     /**
      * Adapter
      */
-    public static class DirsAdapter extends RecyclerView.Adapter<DirsAdapter.ViewHolder>{
+    public class DirsAdapter extends RecyclerView.Adapter<DirsAdapter.ViewHolder>{
 
-        private List<DirView> dirViewList;
+        List<DirView> dirViewList;
         private final String[] options = new String[]{"重命名","删除","导出","设置封面"};
         private final static int DEFAULT_SELECT = 0;
         private int currSelectedOption = DEFAULT_SELECT;
 
-        public DirsAdapter(List<DirView> dirViewList){
+
+        DirsAdapter(List<DirView> dirViewList) {
             this.dirViewList = dirViewList;
         }
 
-        //Holder类
         class ViewHolder extends RecyclerView.ViewHolder{
             CardView dirs_item;
             ImageView img_dirs_item;
             TextView tv_dirs_name;
             TextView tv_dirs_count;
             String path;
-
+            //构造
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
-                this.dirs_item = itemView.findViewById(R.id.dirs_item);
-                this.img_dirs_item = itemView.findViewById(R.id.img_dirs_item);
-                this.tv_dirs_name = itemView.findViewById(R.id.tv_dirs_name);
-                this.tv_dirs_count = itemView.findViewById(R.id.tv_dirs_count);
+                dirs_item = itemView.findViewById(R.id.dirs_item);
+                img_dirs_item = itemView.findViewById(R.id.img_dirs_item);
+                tv_dirs_name = itemView.findViewById(R.id.tv_dirs_name);
+                tv_dirs_count = itemView.findViewById(R.id.tv_dirs_count);
             }
         }
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
-            View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_dirs_item_grid,parent,false);
-            return new ViewHolder(root);
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_dirs_item_grid,parent,false);
+            return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-            //获取数据内容对象
             final DirView item = dirViewList.get(position);
-
             //添加图片和内容
             Bitmap bmp= BitmapFactory.decodeFile(item.coverPath);
             holder.img_dirs_item.setImageBitmap(bmp);
             //内容
             holder.tv_dirs_name.setText(item.name);
             //数目
-            holder.tv_dirs_count.setText("（"+item.count+"项）");
+            String count = "（"+item.count+"项）";
+            holder.tv_dirs_count.setText(count);
             //路径
             holder.path = Data.externalStoragePath + File.separator + ".file_safe" + File.separator  + "files" + File.separator + item.name;
-
             //设置点击事件
             holder.dirs_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //确定点击的是哪一个
-                    String path = Data.externalStoragePath + File.separator + ".file_safe" + File.separator + "files" + File.separator + item.name;
-
-                    File dir = new File(path);
-                    if(!dir.exists()){
-                        Toast.makeText(view.getContext(), "目录已经不存在了", Toast.LENGTH_SHORT).show();
-                        //刷新一下
-                        DirsFragment.refreshDirs_list();
-                        DirsFragment.refreshDirs_screen();
-                        return;
-                    }
-                    //点击Dir的时候，构造好一个 FileView 的 List
-                    FilesFragment.refreshFileView_list(path);
-                    //切换fragment
-                    FilesFragment fragment = new FilesFragment(path,item.name);
-                    MainActivity.fragmentManager.beginTransaction()
-                            //动画效果
-//                        .setCustomAnimations(R.anim.anim_fragment_right_in, R.anim.anim_fragment_left_out, R.anim.anim_fragment_left_in, R.anim.anim_fragment_right_out)
-                            .addToBackStack(null)
-                            .replace(R.id.fragment_container,fragment)
-                            .commit();
+                    //构造下一个页面的FileViewList
+                    FilesActivity.refreshFileView_list(holder.path);
+                    //界面跳转，共享元素
+                    Intent intent = new Intent(view.getContext(),FilesActivity.class);
+                    intent.putExtra("path",holder.path);
+                    intent.putExtra("name",item.name);
+                    holder.img_dirs_item.setTransitionName("tt");
+                    ActivityOptions options  = ActivityOptions.makeSceneTransitionAnimation(DirsActivity.this,holder.img_dirs_item,"tt");
+                    DirsActivity.this.startActivity(intent,options.toBundle());
                 }
             });
-
             //设置长按事件
             holder.dirs_item.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -355,19 +364,15 @@ public class DirsFragment extends Fragment {
                     final Context context = view.getContext();
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle(item.name);
-
                     builder.setSingleChoiceItems(options, DEFAULT_SELECT, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-//                        Toast.makeText(context, i + "", Toast.LENGTH_SHORT).show();
                             currSelectedOption = i;
                         }
                     });
-
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-//                        Toast.makeText(context, options[currSelectedOption], Toast.LENGTH_SHORT).show();
                             //执行操作
                             switch (currSelectedOption){
                                 case 0://重命名
@@ -386,11 +391,8 @@ public class DirsFragment extends Fragment {
                             }
                         }
                     });
-
                     builder.setNegativeButton("取消",null);
-
                     builder.show();
-
                     return true;
                 }
             });
@@ -401,7 +403,6 @@ public class DirsFragment extends Fragment {
             return dirViewList.size();
         }
 
-        //分离对话框的函数
         //删除目录
         private void rmDirView(final Context context,final String name){
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -414,7 +415,7 @@ public class DirsFragment extends Fragment {
                             File dir = new File(Data.filesPath,name);
                             boolean flag = FileUtil.deleteDir_r(dir);
                             refreshDirs_list();
-                            DirsFragment.recycler.setAdapter(new DirsAdapter(Data.dirViewList));
+                            refreshDirs_screen();
                             if (flag){
                                 ToastUtil.myToast(context,"删除成功");
                             }else {
@@ -425,34 +426,33 @@ public class DirsFragment extends Fragment {
                     .show();
         }
 
+        //重命名目录
         private void renameDirView(final Context context,final String name){
-//            String n = Data.filesPath + File.separator + name;
-//            Toast.makeText(context, "重命名：" + n, Toast.LENGTH_SHORT).show();
             //弹出对话框
             final Dialog dialog = Util.inputDialog(context);
             View view = View.inflate(context, R.layout.layout_dialog_input, null);
-            TextView dialog_cancel = view.findViewById(R.id.dialog_cancel);
-            TextView dialog_conform = view.findViewById(R.id.dialog_conform);
-            TextView tv_dialog_title = view.findViewById(R.id.tv_dialog_title);
-            tv_dialog_title.setText("重命名目录");
-            final EditText edit_dir_name = view.findViewById(R.id.edit_dir_name);
-            edit_dir_name.setText(name);
+            TextView cancel = view.findViewById(R.id.dialog_cancel);
+            TextView conform = view.findViewById(R.id.dialog_conform);
+            TextView title = view.findViewById(R.id.tv_dialog_title);
+            title.setText("重命名目录（名字别太长>_<）");
+            final EditText dir_name = view.findViewById(R.id.edit_dir_name);
+            dir_name.setText(name);
             //设置对话框的大小
             view.setMinimumHeight((int) (ScreenSizeUtil.getScreenHeight(context) * 0.2f));
             //设置按钮事件
             //取消按钮
-            dialog_cancel.setOnClickListener(new View.OnClickListener() {
+            cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     dialog.dismiss();
                 }
             });
             //确定按钮
-            dialog_conform.setOnClickListener(new View.OnClickListener() {
+            conform.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //获取输入的内容
-                    String newName = edit_dir_name.getText().toString().trim();
+                    String newName = dir_name.getText().toString().trim();
                     if(TextUtils.isEmpty(newName)){
                         Toast.makeText(view.getContext(), "请输入", Toast.LENGTH_SHORT).show();
                         return;
@@ -469,8 +469,8 @@ public class DirsFragment extends Fragment {
                         if(flag){
                             ToastUtil.myToast(view.getContext(),"成功");
                             //刷新
-                            DirsFragment.refreshDirs_list();
-                            DirsFragment.refreshDirs_screen();
+                            refreshDirs_list();
+                            refreshDirs_screen();
                         }else {
                             ToastUtil.errorToast(view.getContext(),"失败");
                         }
@@ -484,34 +484,62 @@ public class DirsFragment extends Fragment {
             dialog.setContentView(view);
             dialog.show();
             //设置获取焦点时全选
-            edit_dir_name.setSelectAllOnFocus(true);
-            edit_dir_name.requestFocus();
+            dir_name.setSelectAllOnFocus(true);
+            dir_name.requestFocus();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    InputMethodManager imm = (InputMethodManager) edit_dir_name.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(edit_dir_name,InputMethodManager.SHOW_IMPLICIT);
+                    InputMethodManager imm = (InputMethodManager) dir_name.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.showSoftInput(dir_name,InputMethodManager.SHOW_IMPLICIT);
+                    }
                 }
             },160);
         }
 
     }
 
+
+
+    @Override
+    public void onBackPressed() {
+        //首先检测抽屉是否关闭
+        if(drawer.isDrawerOpen(GravityCompat.START)) {
+            //如果打开了DrawerLayout则返回键是关闭
+            drawer.closeDrawers();
+            return;
+        }
+        if ((System.currentTimeMillis() - exitTime) > 1800) {
+            Snackbar.make(drawer,"重复此动作退出保险箱",Snackbar.LENGTH_SHORT).show();
+            exitTime = System.currentTimeMillis();
+        }
+        else {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //只要此界面显示了，就刷新视图（防止误删文件夹后，又点击）
+        refreshDirs_list();
+        refreshDirs_screen();
+    }
+
     public static class DirView {
         //图片
-        public String coverPath;
+        String coverPath;
         //内容
         public String name;
         //包含多少项
-        public String count;
+        String count;
 
         //图片路径、内容
-        public DirView(String coverPath,String name,String count){
+        DirView(String coverPath, String name, String count){
             this.coverPath = coverPath;
             this.name = name;
             this.count = count;
         }
     }
-
 }

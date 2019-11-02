@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--主题颜色-->
-    <color name="colorPrimary">#607D8B</color>
+    <color name="colorPrimary">#6690FF</color>
     <color name="colorPrimaryDark">#465A65</color>
     <color name="colorAccent">#6690FF</color>
     <color name="colorStatusBar">#465A65</color>

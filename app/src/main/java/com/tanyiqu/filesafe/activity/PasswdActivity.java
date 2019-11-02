@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
-import com.tanyiqu.filesafe.fragment.DirsFragment;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
 import com.tanyiqu.filesafe.utils.Util;
@@ -29,8 +28,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class PasswdActivity extends Activity {
@@ -291,12 +288,12 @@ public class PasswdActivity extends Activity {
 
     private void initDirsView() {
         //使用配置文件初始化
-        List<DirsFragment.DirView> dirViewList = new ArrayList<DirsFragment.DirView>();
-        DirsFragment.refreshDirs_list();
+        DirsActivity.refreshDirs_list();
+
     }
 
     public void goMain(){
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, DirsActivity.class));
         finish();
     }
 

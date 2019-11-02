@@ -32,4 +32,9 @@ public class SettingActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.anim_page_jump_3,R.anim.anim_page_jump_4);
+    }
 }
