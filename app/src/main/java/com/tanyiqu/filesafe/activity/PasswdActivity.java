@@ -97,7 +97,7 @@ public class PasswdActivity extends Activity {
                             nineLockView.refreshView(false);
                         }else {//第二次绘制
                             if(pass.equals(passwd)){//如果和上次绘制的一样，此密码就为新密码
-                                Toast.makeText(PasswdActivity.this, "以设置密码为：" + passwd, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PasswdActivity.this, "已设置密码为：" + passwd, Toast.LENGTH_SHORT).show();
                                 //记录新密码
                                 try {
                                     FileWriter out = new FileWriter(passFile);

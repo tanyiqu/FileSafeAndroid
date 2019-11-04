@@ -4,7 +4,7 @@
     <color name="colorPrimary">#6690FF</color>
     <color name="colorPrimaryDark">#465A65</color>
     <color name="colorAccent">#6690FF</color>
-    <color name="colorStatusBar">#465A65</color>
+    <color name="colorStatusBar">#000000</color>
     <color name="colorToolBar">#6690FF</color>
     <color name="colorActionBarTitle">#FFFFFF</color>
     <color name="colorBackground">#EBEBEB</color>

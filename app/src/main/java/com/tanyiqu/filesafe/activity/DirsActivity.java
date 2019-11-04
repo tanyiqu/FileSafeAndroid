@@ -337,7 +337,7 @@ public class DirsActivity extends AppCompatActivity {
             //内容
             holder.tv_dirs_name.setText(item.name);
             //数目
-            String count = "（"+item.count+"项）";
+            String count = " ("+item.count+"项)";
             holder.tv_dirs_count.setText(count);
             //路径
             holder.path = Data.externalStoragePath + File.separator + ".file_safe" + File.separator  + "files" + File.separator + item.name;
