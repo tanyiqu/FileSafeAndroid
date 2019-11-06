@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -64,6 +63,8 @@ public class FileSelectActivity extends Activity {
     //记录所有层的第一个view的位置和偏移
     int[] positions = new int[100];
     int[] offset = new int[100];
+    int pos;
+    int off;
     //是否为多选模式
     boolean isSelectMode = false;
 
@@ -205,91 +206,112 @@ public class FileSelectActivity extends Activity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
-                    case R.id.action_add_files:
-                        //获取已选择的文件列表
-                        final List<String> paths = adapter.getSelected();
-                        //如果没有选择文件，直接返回
-                        if(paths.size() == 0){
-                            Toast.makeText(FileSelectActivity.this, "请选择文件", Toast.LENGTH_SHORT).show();
-                            return false;
-                        }
-                        //依次判断重复的文件
-                        List<String> repeat = new ArrayList<>();
-                        for(String path : paths){
-                            //截取名字
-                            String name = path.substring(path.lastIndexOf(File.separator) + 1);
-                            //判断名字是否重复
-                            if(fileIsExist(name)){
-                                repeat.add(name);
-                            }
-                        }
-                        //repeat里面的全部是重复的文件
-                        if(repeat.size() != 0){//有重复的文件
-                            StringBuilder sb = new StringBuilder();
-                            sb.append("\"");
-                            sb.append(repeat.get(0));
-                            sb.append("\"\n");
-                            if(repeat.size() >= 2){
-                                sb.append("\"");
-                                sb.append(repeat.get(1));
-                                sb.append("\"...\n");
-                            }
-                            sb.append("等");
-                            sb.append(repeat.size());
-                            sb.append("个文件已存在");
-                            new AlertDialog.Builder(FileSelectActivity.this)
-                                    .setTitle("警告")
-                                    .setMessage(sb)
-                                    .setPositiveButton("确定",null)
-                                    .show();
-                            return false;
-                        }
-                        //现在paths里已经没有重复的文件了
-                        //弹出对话框确认加密
-                        new AlertDialog.Builder(FileSelectActivity.this)
-                                .setMessage("确定加密选择的" + paths.size() + "个文件")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        //加密所选的文件
-                                        //构造加密文件列表
-                                        List<File> oldFiles = new ArrayList<>();
-                                        List<File> newFiles = new ArrayList<>();
-                                        for(String path : paths){
-                                            //构造old
-                                            File oldFile = new File(path);
-                                            //构造new
-                                            //随机一个不重复的文件名
-                                            File newFile = null;
-                                            String newFileName = null;
-                                            while (true){
-                                                newFileName = Util.RandomName();
-                                                newFile = new File(FilesActivity.path,newFileName);
-                                                //如果文件已存在，重新随机一个
-                                                if(!newFile.exists()){
-                                                    break;
-                                                }
-                                            }
-                                            oldFiles.add(oldFile);
-                                            newFiles.add(newFile);
-                                            //配置文件更新
-                                            Util.updateIni(new File(FilesActivity.path,"data.db"),
-                                                    oldFile.getName(),
-                                                    newFile.getName(),
-                                                    oldFile.lastModified(),
-                                                    oldFile.length());
-                                        }
-                                        copyDirDialog(FileSelectActivity.this,oldFiles,newFiles);
-                                    }
-                                })
-                                .setNegativeButton("取消",null)
-                                .show();
-
+                    //反选
+                    case R.id.action_inverse_select:
+                        //反选文件
+                        adapter.inverseSelect();
+                        //转到指定位置
+                        layoutManager.scrollToPositionWithOffset(pos,off);
                         break;
+                    //全选
+                    case R.id.action_select_all:
+                        //选择全部文件
+                        adapter.selectAll();
+                        //转到指定位置
+                        layoutManager.scrollToPositionWithOffset(pos,off);
+                        break;
+                    //添加
+                    case R.id.action_add_files:
+                        return addFiles();
                 }
                 return false;
             }
         });
+    }
+
+
+
+    private boolean addFiles(){
+        //获取已选择的文件列表
+        final List<String> paths = adapter.getSelected();
+
+        //如果没有选择文件，直接返回
+        if(paths.size() == 0){
+            Toast.makeText(FileSelectActivity.this, "请选择文件", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        //依次判断重复的文件
+        List<String> repeat = new ArrayList<>();
+        for(String path : paths){
+            //截取名字
+            String name = path.substring(path.lastIndexOf(File.separator) + 1);
+            //判断名字是否重复
+            if(fileIsExist(name)){
+                repeat.add(name);
+            }
+        }
+        //repeat里面的全部是重复的文件
+        if(repeat.size() != 0){//有重复的文件
+            StringBuilder sb = new StringBuilder();
+            sb.append("\"");
+            sb.append(repeat.get(0));
+            sb.append("\"\n");
+            if(repeat.size() >= 2){
+                sb.append("\"");
+                sb.append(repeat.get(1));
+                sb.append("\"...\n");
+            }
+            sb.append("等");
+            sb.append(repeat.size());
+            sb.append("个文件已存在");
+            new AlertDialog.Builder(FileSelectActivity.this)
+                    .setTitle("警告")
+                    .setMessage(sb)
+                    .setPositiveButton("确定",null)
+                    .show();
+            return false;
+        }
+        //现在paths里已经没有重复的文件了
+        //弹出对话框确认加密
+        new AlertDialog.Builder(FileSelectActivity.this)
+                .setMessage("确定加密选择的" + paths.size() + "个文件")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //加密所选的文件
+                        //构造加密文件列表
+                        List<File> oldFiles = new ArrayList<>();
+                        List<File> newFiles = new ArrayList<>();
+                        for(String path : paths){
+                            //构造old
+                            File oldFile = new File(path);
+                            //构造new
+                            //随机一个不重复的文件名
+                            File newFile = null;
+                            String newFileName = null;
+                            while (true){
+                                newFileName = Util.RandomName();
+                                newFile = new File(FilesActivity.path,newFileName);
+                                //如果文件已存在，重新随机一个
+                                if(!newFile.exists()){
+                                    break;
+                                }
+                            }
+                            oldFiles.add(oldFile);
+                            newFiles.add(newFile);
+                            //配置文件更新
+                            Util.updateIni(new File(FilesActivity.path,"data.db"),
+                                    oldFile.getName(),
+                                    newFile.getName(),
+                                    oldFile.lastModified(),
+                                    oldFile.length());
+                        }
+                        copyDirDialog(FileSelectActivity.this,oldFiles,newFiles);
+                    }
+                })
+                .setNegativeButton("取消",null)
+                .show();
+        return false;
     }
 
     @Override
@@ -318,7 +340,7 @@ public class FileSelectActivity extends Activity {
     class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>{
 
         private List<FileInfo> adapterFiles;
-        //0未选中 1选中 2不可见
+
         private Map<Integer,Boolean> checkStatus;
 
         FileAdapter(List<FileInfo> adapterFiles) {
@@ -396,7 +418,9 @@ public class FileSelectActivity extends Activity {
         public int getItemCount() {
             return this.adapterFiles.size();
         }
-        public List<String> getSelected(){
+
+        //返回被选中的项
+        List<String> getSelected(){
             List<String> strings = new ArrayList<>();
             for(int i=0;i<adapterFiles.size();i++){
                 if(checkStatus.get(i)){
@@ -405,6 +429,50 @@ public class FileSelectActivity extends Activity {
             }
             return strings;
         }
+
+        //全选
+        void selectAll(){
+            //先将所有状态设为true
+            for(int i=0;i<adapterFiles.size();i++){
+                FileInfo fileInfo = adapterFiles.get(i);
+                if(fileInfo.size.contains("项"))
+                    continue;
+                checkStatus.put(i,true);
+            }
+            //记录位置和偏移
+            View firstView = layoutManager.getChildAt(0);
+            if(firstView != null){
+                off = firstView.getTop();
+                pos = layoutManager.getPosition(firstView);
+            }
+            //刷新
+            recycler.setAdapter(this);
+        }
+
+        //反选
+        void inverseSelect(){
+            for(int i=0;i<adapterFiles.size();i++){
+                FileInfo fileInfo = adapterFiles.get(i);
+                if(fileInfo.size.contains("项"))
+                    continue;
+                Boolean flag = checkStatus.get(i);
+                assert flag != null;
+                if(flag){
+                    checkStatus.put(i,false);
+                }else {
+                    checkStatus.put(i,true);
+                }
+            }
+            //记录位置和偏移
+            View firstView = layoutManager.getChildAt(0);
+            if(firstView != null){
+                off = firstView.getTop();
+                pos = layoutManager.getPosition(firstView);
+            }
+            //刷新
+            recycler.setAdapter(this);
+        }
+
         //Holder
         class ViewHolder extends RecyclerView.ViewHolder{
 

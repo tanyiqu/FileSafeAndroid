@@ -5,10 +5,22 @@
     tools:context=".activity.DirsActivity">
 
     <item
+        android:id="@+id/action_inverse_select"
+        android:orderInCategory="100"
+        android:title="反选"
+        android:icon="@drawable/ic_btn_inverse_select"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_select_all"
+        android:orderInCategory="100"
+        android:title="全选"
+        android:icon="@drawable/ic_btn_select_all"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/action_add_files"
         android:orderInCategory="100"
         android:title="添加"
         android:icon="@drawable/ic_btn_confirm"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>

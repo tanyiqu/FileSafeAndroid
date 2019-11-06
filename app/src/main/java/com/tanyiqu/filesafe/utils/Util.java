@@ -3,6 +3,7 @@ package com.tanyiqu.filesafe.utils;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -23,6 +24,10 @@ import java.util.Random;
 import static android.content.Context.VIBRATOR_SERVICE;
 
 public class Util {
+
+    public static void myLog(String msg){
+        Log.i("MyApp",msg);
+    }
 
     //随机生成 [0,n] 的随机数
     public static int RandomInt(int n){

@@ -127,7 +127,7 @@ public class FilesActivity extends AppCompatActivity {
     private void refreshFileView_screen(){
         FilesAdapter adapter = new FilesAdapter(Data.fileViewList);
         recycler.setAdapter(adapter);
-        recycler.setLayoutAnimation(DirsActivity.controller);
+//        recycler.setLayoutAnimation(DirsActivity.controller);
     }
 
     /**
