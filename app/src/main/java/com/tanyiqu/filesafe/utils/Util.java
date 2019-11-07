@@ -19,23 +19,37 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 import static android.content.Context.VIBRATOR_SERVICE;
 
 public class Util {
 
+    /**
+     * Log
+     * @param msg 信息
+     */
     public static void myLog(String msg){
         Log.i("MyApp",msg);
     }
 
-    //随机生成 [0,n] 的随机数
+    /**
+     * 随机生成 [0,n] 的随机数
+     * @param n 右界
+     * @return 随机数
+     */
     public static int RandomInt(int n){
         Random r = new Random();
         return r.nextInt(n+1);
     }
 
-    //随机生成 [n,m] 的随机数
+    /**
+     * 随机生成 [n,m] 的随机数
+     * @param n 左界
+     * @param m 右界
+     * @return 随机数
+     */
     public static int RandomInt(int n,int m){
         Random r = new Random();
         int s = r.nextInt(m);   //[0,m)
@@ -45,7 +59,10 @@ public class Util {
         return s;
     }
 
-    //随机文件名字
+    /**
+     * 随机文件名字
+     * @return 随机的文件名
+     */
     public static String RandomName(){
         String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder sb = new StringBuilder();
@@ -56,7 +73,11 @@ public class Util {
         return sb.toString();
     }
 
-    //合法就 return true
+    /**
+     * 检测文件名是否合法
+     * @param name 文件名
+     * @return  是否合法
+     */
     public static boolean checkFileName(String name){
         if(name.charAt(0) == '.') { return false;}
         if(name.contains("\\")){ return false;}
@@ -70,6 +91,14 @@ public class Util {
         return !name.contains("|");
     }
 
+    /**
+     * 更新配置文件
+     * @param iniFile File
+     * @param orName 原名字
+     * @param enName 加密名字
+     * @param date 日期
+     * @param size 大小
+     */
     public static void updateIni(File iniFile,String orName,String enName,long date,long size){
         try {
             FileWriter out = new FileWriter(iniFile,true);//追加
@@ -84,7 +113,11 @@ public class Util {
         }
     }
 
-    //字节数转大小
+    /**
+     * 字节数转大小
+     * @param size 字节大小
+     * @return 字符串形式的大小
+     */
     public static String byteToSize(long size) {
         int GB = 1024 * 1024 * 1024;//定义GB的计算常量
         int MB = 1024 * 1024;//定义MB的计算常量
@@ -106,13 +139,22 @@ public class Util {
         return resultSize;
     }
 
-    //毫秒数转日期
+    /**
+     * 毫秒数转为日期
+     * @param millSec 毫秒数
+     * @return 字符串的日期
+     */
     public static String transferLongToDate(Long millSec){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
         Date data = new Date(millSec);
         return sdf.format(data);
     }
 
+    /**
+     * 手机震动
+     * @param context Context
+     * @param milliseconds 毫秒数
+     */
     public static void vibrate(Context context,long milliseconds){
         Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
         if (vibrator != null) {
@@ -120,6 +162,11 @@ public class Util {
         }
     }
 
+    /**
+     * 生成默认格式的input对话框
+     * @param context Context
+     * @return 对话框
+     */
     public static Dialog inputDialog(Context context){
         Dialog dialog = new Dialog(context, R.style.NormalDialogStyle);
         //使得点击对话框外部不消失对话框

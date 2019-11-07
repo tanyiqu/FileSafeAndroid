@@ -13,7 +13,7 @@ public class MiLanTextView extends TextView {
 
     @Override
     public void setTypeface(Typeface tf) {
-        tf = Typeface.createFromAsset(getContext().getAssets(), "fonts/mi_lan.ttf");
+        tf = Typeface.createFromAsset(getContext().getAssets(), "fonts/MiLan.ttf");
         super.setTypeface(tf);
     }
 }

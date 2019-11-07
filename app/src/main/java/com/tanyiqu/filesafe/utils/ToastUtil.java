@@ -12,7 +12,12 @@ import android.widget.Toast;
 import com.tanyiqu.filesafe.R;
 
 public class ToastUtil {
-    //自定义Toast
+
+    /**
+     * 自定义Toast
+     * @param context Context
+     * @param text 文本
+     */
     public static void myToast(Context context, String text){
         View toastView = LayoutInflater.from(context).inflate(R.layout.layout_toast, null);
         LinearLayout relativeLayout = (LinearLayout)toastView.findViewById(R.id.toast_linear);
@@ -29,6 +34,11 @@ public class ToastUtil {
         toast.show();
     }
 
+    /**
+     * 错误Toast
+     * @param context Context
+     * @param text 文本
+     */
     public static void errorToast(Context context, String text){
         View toastView = LayoutInflater.from(context).inflate(R.layout.layout_toast_error, null);
         LinearLayout relativeLayout = (LinearLayout)toastView.findViewById(R.id.toast_linear);
@@ -44,7 +54,5 @@ public class ToastUtil {
         toast.setView(toastView);
         toast.show();
     }
-
-
 
 }
