@@ -28,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tanyiqu.filesafe.Bean.FileSelectBean;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.utils.FileUtil;
@@ -89,6 +90,9 @@ public class FileSelectActivity extends Activity {
         init();
     }
 
+    /**
+     * 初始化
+     */
     private void init() {
 
         initToolBar();
@@ -103,23 +107,28 @@ public class FileSelectActivity extends Activity {
         parentPath = null;
     }
 
+    /**
+     * 进入目录
+     * @param dirPath 目录路径
+     * @param isBack 是否为返回
+     */
     private void enterDir(String dirPath,boolean  isBack) {
         File dir = new File(dirPath);
         File[] files = dir.listFiles();
         assert files != null;
         //遍历文件夹
-        List<FileInfo> Dirs = new ArrayList<FileInfo>();
-        List<FileInfo> Files = new ArrayList<FileInfo>();
+        List<FileSelectBean> Dirs = new ArrayList<>();
+        List<FileSelectBean> Files = new ArrayList<>();
         for(File f : files){
-            FileInfo fileInfo = new FileInfo();
+            FileSelectBean item = new FileSelectBean();
             if(f.isHidden()){
                 continue;
             }
-            fileInfo.parent = f.getParent();
-            fileInfo.name = f.getName();
-            fileInfo.date = Util.transferLongToDate(f.lastModified());
+            item.setParent(f.getParent());
+            item.setName(f.getName());
+            item.setDate(Util.transferLongToDate(f.lastModified()));
             if(f.isDirectory()){//文件夹
-                fileInfo.imgID = R.mipmap.ic_file_folder;
+                item.setImgID(R.mipmap.ic_file_folder);
                 //计算出子文件数量，不加隐藏文件
                 int count = 0;
                 File[] sub = f.listFiles();
@@ -130,19 +139,19 @@ public class FileSelectActivity extends Activity {
                     }
                     count++;
                 }
-                fileInfo.size = count + "项";
-                Dirs.add(fileInfo);
+                item.setSize(count + "项");
+                Dirs.add(item);
             }else { //文件
-                fileInfo.imgID = FileUtil.getImgId(FileUtil.getFileExt(fileInfo.name));//根据扩展名，适配图标
-                fileInfo.size = Util.byteToSize(f.length());
-                Files.add(fileInfo);
+                item.setImgID(FileUtil.getImgId(FileUtil.getFileExt(item.getName())));//根据扩展名，适配图标
+                item.setSize(Util.byteToSize(f.length()));
+                Files.add(item);
             }
         }
         //排序 先按照中文升序，在按字母升序
-        Comparator<FileInfo> comparator = new Comparator<FileInfo>() {
+        Comparator<FileSelectBean> comparator = new Comparator<FileSelectBean>() {
             @Override
-            public int compare(FileInfo l, FileInfo r) {
-                return Collator.getInstance(Locale.CHINESE).compare(l.name,r.name);
+            public int compare(FileSelectBean l, FileSelectBean r) {
+                return Collator.getInstance(Locale.CHINESE).compare(l.getName(), r.getName());
             }
         };
         Collections.sort(Dirs,comparator);
@@ -170,6 +179,9 @@ public class FileSelectActivity extends Activity {
         tv_path.setText(currPath.replace(Data.externalStoragePath,"内部存储设备"));
     }
 
+    /**
+     * 初始化Recycler
+     */
     private void initRecycler() {
         recycler = findViewById(R.id.recycler_file_select);
         layoutManager = new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
@@ -191,6 +203,9 @@ public class FileSelectActivity extends Activity {
         });
     }
 
+    /**
+     * 初始化ToolBar
+     */
     private void initToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbar_file_select);
         toolbar.setTitle("选择文件");
@@ -229,8 +244,10 @@ public class FileSelectActivity extends Activity {
         });
     }
 
-
-
+    /**
+     * 添加文件
+     * @return 返回false，详见调用处
+     */
     private boolean addFiles(){
         //获取已选择的文件列表
         final List<String> paths = adapter.getSelected();
@@ -287,8 +304,8 @@ public class FileSelectActivity extends Activity {
                             File oldFile = new File(path);
                             //构造new
                             //随机一个不重复的文件名
-                            File newFile = null;
-                            String newFileName = null;
+                            File newFile;
+                            String newFileName;
                             while (true){
                                 newFileName = Util.RandomName();
                                 newFile = new File(FilesActivity.path,newFileName);
@@ -314,6 +331,9 @@ public class FileSelectActivity extends Activity {
         return false;
     }
 
+    /**
+     * 重写返回事件
+     */
     @Override
     public void onBackPressed() {
         //如果时多选模式，点击返回时退出多选模式
@@ -339,15 +359,19 @@ public class FileSelectActivity extends Activity {
      */
     class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder>{
 
-        private List<FileInfo> adapterFiles;
+        private List<FileSelectBean> fileList;
 
         private Map<Integer,Boolean> checkStatus;
 
-        FileAdapter(List<FileInfo> adapterFiles) {
-            this.adapterFiles = adapterFiles;
+        /**
+         * 构造
+         * @param fileList File列表
+         */
+        FileAdapter(List<FileSelectBean> fileList) {
+            this.fileList = fileList;
             checkStatus = new HashMap<>();
             //默认都未选中
-            for(int i=0;i<adapterFiles.size();i++){
+            for(int i=0;i<fileList.size();i++){
                 checkStatus.put(i,false);
             }
         }
@@ -361,11 +385,11 @@ public class FileSelectActivity extends Activity {
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-            final FileInfo item = adapterFiles.get(position);
-            holder.img_files_logo.setImageDrawable(getDrawable(item.imgID));
-            holder.tv_file_name.setText(item.name);
-            holder.tv_file_size.setText(item.size);
-            holder.tv_file_date.setText(item.date);
+            final FileSelectBean item = fileList.get(position);
+            holder.img_files_logo.setImageDrawable(getDrawable(item.getImgID()));
+            holder.tv_file_name.setText(item.getName());
+            holder.tv_file_size.setText(item.getSize());
+            holder.tv_file_date.setText(item.getDate());
             holder.checkBox.setOnCheckedChangeListener(null);
 
             holder.checkBox.setVisibility(View.VISIBLE);
@@ -374,7 +398,7 @@ public class FileSelectActivity extends Activity {
             }else {
                 holder.checkBox.setChecked(false);
             }
-            if(item.size.contains("项")){
+            if(item.getSize().contains("项")){
                 holder.checkBox.setVisibility(View.GONE);
             }
             holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -391,9 +415,9 @@ public class FileSelectActivity extends Activity {
             holder.files_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(item.size.contains("项")){
+                    if(item.getSize().contains("项")){
                         floor++;
-                        enterDir(item.parent + File.separator + item.name,false);
+                        enterDir(item.getParent() + File.separator + item.getName(),false);
                     }else {
                         //改变选中的状态
                         if(holder.checkBox.isChecked()){
@@ -408,7 +432,7 @@ public class FileSelectActivity extends Activity {
             holder.files_item.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    Toast.makeText(FileSelectActivity.this,"长按：" + item.name, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FileSelectActivity.this,"长按：" + item.getName(), Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -416,26 +440,33 @@ public class FileSelectActivity extends Activity {
 
         @Override
         public int getItemCount() {
-            return this.adapterFiles.size();
+            return this.fileList.size();
         }
 
-        //返回被选中的项
+        /**
+         * 返回被选中的项
+         * @return 字符串列表形式返回
+         */
         List<String> getSelected(){
             List<String> strings = new ArrayList<>();
-            for(int i=0;i<adapterFiles.size();i++){
-                if(checkStatus.get(i)){
-                    strings.add(adapterFiles.get(i).parent + File.separator + adapterFiles.get(i).name);
+            for(int i=0;i<fileList.size();i++){
+                Boolean flag = checkStatus.get(i);
+                assert flag != null;
+                if(flag){
+                    strings.add(fileList.get(i).getParent() + File.separator + fileList.get(i).getName());
                 }
             }
             return strings;
         }
 
-        //全选
+        /**
+         * 全选
+         */
         void selectAll(){
             //先将所有状态设为true
-            for(int i=0;i<adapterFiles.size();i++){
-                FileInfo fileInfo = adapterFiles.get(i);
-                if(fileInfo.size.contains("项"))
+            for(int i=0;i<fileList.size();i++){
+                FileSelectBean bean = fileList.get(i);
+                if(bean.getSize().contains("项"))
                     continue;
                 checkStatus.put(i,true);
             }
@@ -449,11 +480,13 @@ public class FileSelectActivity extends Activity {
             recycler.setAdapter(this);
         }
 
-        //反选
+        /**
+         * 反选
+         */
         void inverseSelect(){
-            for(int i=0;i<adapterFiles.size();i++){
-                FileInfo fileInfo = adapterFiles.get(i);
-                if(fileInfo.size.contains("项"))
+            for(int i=0;i<fileList.size();i++){
+                FileSelectBean bean = fileList.get(i);
+                if(bean.getSize().contains("项"))
                     continue;
                 Boolean flag = checkStatus.get(i);
                 assert flag != null;
@@ -473,7 +506,9 @@ public class FileSelectActivity extends Activity {
             recycler.setAdapter(this);
         }
 
-        //Holder
+        /**
+         * Holder
+         */
         class ViewHolder extends RecyclerView.ViewHolder{
 
             ConstraintLayout files_item;
@@ -496,19 +531,11 @@ public class FileSelectActivity extends Activity {
     }
 
     /**
-     * FileInfo
-     * 内部类
+     * 判断文件在配置文件里是否已经存在
+     * 隐含条件：FilesActivity.path 为当前进入的目录
+     * @param name 文件名
+     * @return 是否已经存在
      */
-    class FileInfo{
-        int imgID;
-        String name;
-        String size;
-        String date;
-        String parent;
-    }
-
-    //判断文件在配置文件里是否已经存在
-    //隐含条件：FilesActivity.path 为当前进入的目录
     public boolean fileIsExist(String name){
         String iniPath = FilesActivity.path + File.separator + "data.db";
         File iniFile = new File(iniPath);
@@ -532,6 +559,12 @@ public class FileSelectActivity extends Activity {
         return flag;
     }
 
+    /**
+     * 显示复制文件的对话框兼复制文件功能
+     * @param context Context
+     * @param oldFiles 原始文件列表
+     * @param newFiles 新文件列表
+     */
     public void copyDirDialog(final Context context, final List<File> oldFiles, final List<File> newFiles){
         if(oldFiles.size() == 0){
             Toast.makeText(context, "空", Toast.LENGTH_SHORT).show();
@@ -564,10 +597,10 @@ public class FileSelectActivity extends Activity {
                     super.handleMessage(msg);
                     switch (msg.what){
                         case MSG_COPY_START:
-                            tv_msg.setText("第"+curr+"/"+total+"个");
+                            String text = "第"+curr+"/"+total+"个";
+                            tv_msg.setText(text);
                             break;
                         case MSG_COPY_FINISH:
-                            Toast.makeText(context, "完成", Toast.LENGTH_SHORT).show();
                             title.setText("复制完成");
                             tv_msg.setText("");
                             confirm.setVisibility(View.VISIBLE);

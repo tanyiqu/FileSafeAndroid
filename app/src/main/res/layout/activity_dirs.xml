@@ -39,13 +39,19 @@
         </LinearLayout>
     </FrameLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation"
-        app:menu="@menu/menu_slide"
-        app:headerLayout="@layout/layout_nav_header"
+<!--    <com.google.android.material.navigation.NavigationView-->
+<!--        android:id="@+id/navigation"-->
+<!--        app:menu="@menu/menu_slide"-->
+<!--        app:headerLayout="@layout/layout_nav_header"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_gravity="start"-->
+<!--        android:background="@color/colorWhite"/>-->
+
+    <include
+        layout="@layout/layout_slide_menu"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/colorWhite"/>
+        android:layout_gravity="start"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

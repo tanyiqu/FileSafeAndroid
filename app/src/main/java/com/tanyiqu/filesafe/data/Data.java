@@ -2,6 +2,8 @@ package com.tanyiqu.filesafe.data;
 
 import android.Manifest;
 ;
+import com.tanyiqu.filesafe.Bean.DirBean;
+import com.tanyiqu.filesafe.Bean.FileBean;
 import com.tanyiqu.filesafe.activity.DirsActivity;
 import com.tanyiqu.filesafe.activity.FilesActivity;
 
@@ -25,9 +27,9 @@ public class Data {
     public static String[] perms_storage = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static String[] perms_camera = new String[]{Manifest.permission.CAMERA};
     //目录视图      列表
-    public static List<DirsActivity.DirView> dirViewList;
+    public static List<DirBean> dirBeanList;
     //文件视图      列表
-    public static List<FilesActivity.FileView> fileViewList;
+    public static List<FileBean> fileBeanList;
 
     /**
      * 以下函数为赋值函数
@@ -37,12 +39,12 @@ public class Data {
         Data.externalStoragePath = externalStoragePath;
     }
 
-    public static void setDirViewList(List<DirsActivity.DirView> dirViewList) {
-        Data.dirViewList = dirViewList;
+    public static void setDirBeanList(List<DirBean> dirBeanList) {
+        Data.dirBeanList = dirBeanList;
     }
 
-    public static void setFileViewList(List<FilesActivity.FileView> fileViewList) {
-        Data.fileViewList = fileViewList;
+    public static void setFileBeanList(List<FileBean> fileBeanList) {
+        Data.fileBeanList = fileBeanList;
     }
 
     public static void setInternalStoragePath(String internalStoragePath) {

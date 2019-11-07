@@ -1,6 +1,5 @@
 package com.tanyiqu.filesafe.activity;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Context;
@@ -37,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.tanyiqu.filesafe.Bean.DirBean;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.utils.FileUtil;
@@ -59,13 +59,12 @@ import java.util.TimerTask;
 
 public class DirsActivity extends AppCompatActivity {
 
-    private static long exitTime = 0;
+    private long exitTime = 0;
     public static DrawerLayout drawer;
-    public static FragmentManager fragmentManager;
-    public static boolean neededDoubleClickToExit = true;
-    static RecyclerView recycler;
-    static DirsAdapter adapter;
+    private static RecyclerView recycler;
+    private static DirsAdapter adapter;
     public static LayoutAnimationController controller;//用作子fragment中的recycler动画
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +79,6 @@ public class DirsActivity extends AppCompatActivity {
         //初始化ToolBar
         initToolBar();
 
-        fragmentManager = getSupportFragmentManager();
 
         controller = new LayoutAnimationController(AnimationUtils.loadAnimation(this,R.anim.anim_files_show));
 
@@ -95,7 +93,7 @@ public class DirsActivity extends AppCompatActivity {
         recycler = findViewById(R.id.recycler_dirs);
         GridLayoutManager layoutManager = new GridLayoutManager(DirsActivity.this,2);
         recycler.setLayoutManager(layoutManager);
-        adapter = new DirsAdapter(Data.dirViewList);
+        adapter = new DirsAdapter(Data.dirBeanList);
         recycler.setAdapter(adapter);
 
     }
@@ -139,7 +137,9 @@ public class DirsActivity extends AppCompatActivity {
         });
     }
 
-    //初始化侧滑菜单
+    /**
+     * 初始化侧滑菜单
+     */
     private void initNavigationView() {
         NavigationView navigation = findViewById(R.id.navigation);
         navigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -161,9 +161,11 @@ public class DirsActivity extends AppCompatActivity {
         });
     }
 
-    //根据配置文件夹 刷新
+    /**
+     * 根据配置文件夹刷新列表
+     */
     public static void refreshDirs_list(){
-        List<DirView> dirViewList = new ArrayList<DirView>();
+        List<DirBean> dirBeanList = new ArrayList<>();
         //列出files文件夹的所有 文件夹
         File dir = new File(Data.externalStoragePath + "/.file_safe/files");
         File[] files = dir.listFiles();
@@ -173,25 +175,29 @@ public class DirsActivity extends AppCompatActivity {
                     //用 封面和名字 构造
                     String name = d.getName();
                     String count = (d.listFiles().length-2) + "";
-                    dirViewList.add(new DirView(d.getPath() + File.separator + "cover.jpg",name,count));
+                    dirBeanList.add(new DirBean(d.getPath() + File.separator + "cover.jpg",name,count));
                 }
             }
         }
         //按名字排序
-        Comparator<DirView> comparator = new Comparator<DirView>() {
+        Comparator<DirBean> comparator = new Comparator<DirBean>() {
             @Override
-            public int compare(DirView l, DirView r) {
-                return Collator.getInstance(Locale.CHINESE).compare(l.name,r.name);
+            public int compare(DirBean l, DirBean r) {
+                return Collator.getInstance(Locale.CHINESE).compare(l.getName(),r.getName());
             }
         };
-        Collections.sort(dirViewList,comparator);
-        Data.setDirViewList(dirViewList);
+        Collections.sort(dirBeanList,comparator);
+        Data.setDirBeanList(dirBeanList);
     }
     public void refreshDirs_screen(){
-        adapter = new DirsAdapter(Data.dirViewList);
+        adapter = new DirsAdapter(Data.dirBeanList);
         recycler.setAdapter(adapter);
     }
 
+    /**
+     * 新建目录
+     * @param context Context
+     */
     private void mkDir(Context context) {
         final Dialog dialog = Util.inputDialog(context);
         View view = View.inflate(context, R.layout.layout_dialog_input, null);
@@ -295,14 +301,14 @@ public class DirsActivity extends AppCompatActivity {
      */
     public class DirsAdapter extends RecyclerView.Adapter<DirsAdapter.ViewHolder>{
 
-        List<DirView> dirViewList;
+        List<DirBean> dirBeanList;
         private final String[] options = new String[]{"重命名","删除","导出","设置封面"};
         private final static int DEFAULT_SELECT = 0;
         private int currSelectedOption = DEFAULT_SELECT;
 
 
-        DirsAdapter(List<DirView> dirViewList) {
-            this.dirViewList = dirViewList;
+        DirsAdapter(List<DirBean> dirBeanList) {
+            this.dirBeanList = dirBeanList;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder{
@@ -330,17 +336,17 @@ public class DirsActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-            final DirView item = dirViewList.get(position);
+            final DirBean item = dirBeanList.get(position);
             //添加图片和内容
-            Bitmap bmp= BitmapFactory.decodeFile(item.coverPath);
+            Bitmap bmp= BitmapFactory.decodeFile(item.getCoverPath());
             holder.img_dirs_item.setImageBitmap(bmp);
             //内容
-            holder.tv_dirs_name.setText(item.name);
+            holder.tv_dirs_name.setText(item.getName());
             //数目
-            String count = " ("+item.count+"项)";
+            String count = " ("+item.getCount()+"项)";
             holder.tv_dirs_count.setText(count);
             //路径
-            holder.path = Data.externalStoragePath + File.separator + ".file_safe" + File.separator  + "files" + File.separator + item.name;
+            holder.path = Data.externalStoragePath + File.separator + ".file_safe" + File.separator  + "files" + File.separator + item.getName();
             //设置点击事件
             holder.dirs_item.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -350,7 +356,7 @@ public class DirsActivity extends AppCompatActivity {
                     //界面跳转，共享元素
                     Intent intent = new Intent(view.getContext(),FilesActivity.class);
                     intent.putExtra("path",holder.path);
-                    intent.putExtra("name",item.name);
+                    intent.putExtra("name",item.getName());
                     holder.img_dirs_item.setTransitionName("tt");
                     ActivityOptions options  = ActivityOptions.makeSceneTransitionAnimation(DirsActivity.this,holder.img_dirs_item,"tt");
                     DirsActivity.this.startActivity(intent,options.toBundle());
@@ -363,7 +369,7 @@ public class DirsActivity extends AppCompatActivity {
                     currSelectedOption = DEFAULT_SELECT;
                     final Context context = view.getContext();
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle(item.name);
+                    builder.setTitle(item.getName());
                     builder.setSingleChoiceItems(options, DEFAULT_SELECT, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -376,11 +382,11 @@ public class DirsActivity extends AppCompatActivity {
                             //执行操作
                             switch (currSelectedOption){
                                 case 0://重命名
-                                    renameDirView(context,item.name);
+                                    renameDirView(context,item.getName());
                                     break;
                                 case 1://删除
                                     //删除 item.content
-                                    rmDirView(context,item.name);
+                                    rmDirView(context,item.getName());
                                     break;
                                 case 2://导出
 
@@ -400,10 +406,14 @@ public class DirsActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return dirViewList.size();
+            return dirBeanList.size();
         }
 
-        //删除目录
+        /**
+         * 删除目录
+         * @param context Context
+         * @param name 名字
+         */
         private void rmDirView(final Context context,final String name){
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("删除")
@@ -426,7 +436,11 @@ public class DirsActivity extends AppCompatActivity {
                     .show();
         }
 
-        //重命名目录
+        /**
+         * 重命名目录
+         * @param context Context
+         * @param name 名字
+         */
         private void renameDirView(final Context context,final String name){
             //弹出对话框
             final Dialog dialog = Util.inputDialog(context);
@@ -500,8 +514,9 @@ public class DirsActivity extends AppCompatActivity {
 
     }
 
-
-
+    /**
+     * 重写返回事件
+     */
     @Override
     public void onBackPressed() {
         //首先检测抽屉是否关闭
@@ -519,6 +534,9 @@ public class DirsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 重写onResume
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -527,19 +545,4 @@ public class DirsActivity extends AppCompatActivity {
         refreshDirs_screen();
     }
 
-    public static class DirView {
-        //图片
-        String coverPath;
-        //内容
-        public String name;
-        //包含多少项
-        String count;
-
-        //图片路径、内容
-        DirView(String coverPath, String name, String count){
-            this.coverPath = coverPath;
-            this.name = name;
-            this.count = count;
-        }
-    }
 }

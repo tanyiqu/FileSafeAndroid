@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,15 +11,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.tanyiqu.filesafe.Bean.FileBean;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.exception.NoSuchFileToOpenException;
@@ -46,12 +44,11 @@ public class FilesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_files);
 
         Bundle extra = getIntent().getExtras();
-        path = extra.getString("path");
-        name = extra.getString("name");
-
+        if (extra != null) {
+            path = extra.getString("path");
+            name = extra.getString("name");
+        }
         init();
-
-
 
     }
 
@@ -84,9 +81,8 @@ public class FilesActivity extends AppCompatActivity {
         recycler = findViewById(R.id.recycler_files);
         LinearLayoutManager layoutManager = new LinearLayoutManager(FilesActivity.this,RecyclerView.VERTICAL,false);
         recycler.setLayoutManager(layoutManager);
-        FilesAdapter adapter = new FilesAdapter(Data.fileViewList);
+        FilesAdapter adapter = new FilesAdapter(Data.fileBeanList);
         recycler.setAdapter(adapter);
-        //动画效果;
     }
 
     private void addListeners() {
@@ -106,7 +102,7 @@ public class FilesActivity extends AppCompatActivity {
 
     //刷新列表
     public static void refreshFileView_list(String path){
-        List<FileView> list = new ArrayList<FileView>();;
+        List<FileBean> list = new ArrayList<>();;
         String iniPath = path + File.separator + "data.db";
         File iniFile = new File(iniPath);
         try {
@@ -115,19 +111,18 @@ public class FilesActivity extends AppCompatActivity {
             String line = null;
             while((line = br.readLine()) != null){
                 String[] strings = line.split(Data.Splitter);
-                FileView fv = new FileView(strings[0],strings[1],strings[2],strings[3],path);
+                FileBean fv = new FileBean(strings[0],strings[1],strings[2],strings[3],path);
                 list.add(fv);
             }
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Data.setFileViewList(list);
+        Data.setFileBeanList(list);
     }
     private void refreshFileView_screen(){
-        FilesAdapter adapter = new FilesAdapter(Data.fileViewList);
+        FilesAdapter adapter = new FilesAdapter(Data.fileBeanList);
         recycler.setAdapter(adapter);
-//        recycler.setLayoutAnimation(DirsActivity.controller);
     }
 
     /**
@@ -135,10 +130,10 @@ public class FilesActivity extends AppCompatActivity {
      */
     public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder>{
 
-        private List<FileView> fileViewList;
+        private List<FileBean> fileBeanList;
 
-        public FilesAdapter(List<FileView> fileViewList) {
-            this.fileViewList = fileViewList;
+        FilesAdapter(List<FileBean> fileBeanList) {
+            this.fileBeanList = fileBeanList;
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder{
@@ -149,11 +144,9 @@ public class FilesActivity extends AppCompatActivity {
             TextView tv_file_size;
             TextView tv_file_date;
 
-            String original_name;    //原文件名字
-            String encrypted_name;   //加密后的名字
             public String path;             //file所在的目录路径
 
-            public ViewHolder(@NonNull View itemView) {
+            ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 files_item = itemView.findViewById(R.id.files_item);
                 img_files_logo = itemView.findViewById(R.id.img_files_logo);
@@ -172,22 +165,19 @@ public class FilesActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            final FileView item = fileViewList.get(position);
-            final String ext = FileUtil.getFileExt(item.original_name);
-
+            final FileBean item = fileBeanList.get(position);
+            final String ext = FileUtil.getFileExt(item.getOriginal_name());
             holder.img_files_logo.setImageDrawable(getDrawable(FileUtil.getImgId(ext)));
-            holder.tv_file_name.setText(item.original_name);
-            holder.tv_file_size.setText(item.size);
-            holder.tv_file_date.setText(item.date);
-            holder.original_name = item.original_name;
-            holder.encrypted_name = item.encrypted_name;
+            holder.tv_file_name.setText(item.getOriginal_name());
+            holder.tv_file_size.setText(item.getSize());
+            holder.tv_file_date.setText(item.getDate());
             //设置点击事件
             holder.files_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //打开此文件
                     try {
-                        File file = new File(item.path + File.separator + item.encrypted_name);
+                        File file = new File(item.getPath() + File.separator + item.getEncrypted_name());
                         FileUtil.openFile(view.getContext(),file ,ext);
                     } catch (NoSuchFileToOpenException e) {
                         ToastUtil.errorToast(view.getContext(),e.getMessage());
@@ -198,30 +188,9 @@ public class FilesActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return fileViewList.size();
+            return fileBeanList.size();
         }
 
-    }
-
-    public static class FileView {
-        //名字
-        public String original_name;    //原文件名字
-        public String encrypted_name;   //加密后的名字
-        //日期
-        public String date;
-        //大小
-        public String size;
-        //file 所在的路径
-        public String path;
-
-        //原文件名 加密后文件名 日期 大小 所在路径（用于打开文件）
-        public FileView(String original_name, String encrypted_name, String date, String size, String path) {
-            this.original_name = original_name;
-            this.encrypted_name = encrypted_name;
-            this.date = date;
-            this.size = size;
-            this.path = path;
-        }
     }
 
     @Override
