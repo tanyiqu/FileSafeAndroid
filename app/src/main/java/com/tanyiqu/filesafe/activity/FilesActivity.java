@@ -1,6 +1,7 @@
 package com.tanyiqu.filesafe.activity;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -67,8 +68,12 @@ public class FilesActivity extends AppCompatActivity {
 
     private void initToolBar() {
         final Toolbar toolbar = findViewById(R.id.toolbar_files);
-        setSupportActionBar(toolbar);
         toolbar.setTitle(name);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

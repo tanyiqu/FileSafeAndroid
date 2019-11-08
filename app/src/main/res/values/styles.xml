@@ -16,7 +16,7 @@
     </style>
 
     <!--Activity主题-->
-    <style name="ToolBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="ActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -25,6 +25,11 @@
         <item name="android:activityOpenExitAnimation">@anim/anim_page_jump_2</item>
         <item name="android:activityCloseEnterAnimation">@anim/anim_page_jump_3</item>
         <item name="android:activityCloseExitAnimation">@anim/anim_page_jump_4</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textSize">18sp</item>
+        <item name="colorControlNormal">@android:color/white</item>
     </style>
 
     <!--对话框样式-->

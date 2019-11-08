@@ -24,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -79,7 +81,6 @@ public class DirsActivity extends AppCompatActivity {
         //初始化ToolBar
         initToolBar();
 
-
         controller = new LayoutAnimationController(AnimationUtils.loadAnimation(this,R.anim.anim_files_show));
 
         //初始化侧滑菜单
@@ -95,20 +96,30 @@ public class DirsActivity extends AppCompatActivity {
         recycler.setLayoutManager(layoutManager);
         adapter = new DirsAdapter(Data.dirBeanList);
         recycler.setAdapter(adapter);
-
     }
 
     private void initToolBar() {
         final Toolbar toolbar = findViewById(R.id.toolbar_dirs);
         //设置标题
         toolbar.setTitle("保险箱");
-        //设置导航Button点击事件
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.drawer_open,R.string.drawer_close){
             @Override
-            public void onClick(View v) {
-                DirsActivity.drawer.openDrawer(GravityCompat.START);
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
             }
-        });
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+            }
+        };
+        drawerToggle.syncState();
+        drawer.addDrawerListener(drawerToggle);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+        }
         //设置移除更多选项图片  如果不设置会默认使用系统灰色的图标
         toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.ic_btn_more));
         //添加menu
@@ -160,6 +171,8 @@ public class DirsActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     /**
      * 根据配置文件夹刷新列表

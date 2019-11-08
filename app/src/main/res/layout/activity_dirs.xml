@@ -22,13 +22,10 @@
                 android:id="@+id/toolbar_dirs"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorToolBar"
-                app:title="@string/app_name"
+                android:background="?attr/colorAccent"
                 app:titleTextColor="@color/colorActionBarTitle"
-                app:navigationIcon="@drawable/ic_btn_menu"
                 app:subtitleTextColor="#fff"
-                android:theme="@style/Base.Theme.AppCompat.Light"/>
-
+                android:theme="@style/ToolbarTheme"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_dirs"

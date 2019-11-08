@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -50,7 +53,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class FileSelectActivity extends Activity {
+public class FileSelectActivity extends AppCompatActivity {
 
     RecyclerView recycler;
     LinearLayoutManager layoutManager;
@@ -86,7 +89,6 @@ public class FileSelectActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_select);
-
         init();
     }
 
@@ -209,6 +211,7 @@ public class FileSelectActivity extends Activity {
     private void initToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbar_file_select);
         toolbar.setTitle("选择文件");
+        setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -242,6 +245,10 @@ public class FileSelectActivity extends Activity {
                 return false;
             }
         });
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     /**
@@ -351,6 +358,17 @@ public class FileSelectActivity extends Activity {
             floor--;
             enterDir(parentPath,true);
         }
+    }
+
+    /**
+     * 重写onCreateOptionsMenu
+     * @param menu menu
+     * @return true or false
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_select_file_toolbar,menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.tanyiqu.filesafe.activity;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -24,6 +25,11 @@ public class SettingActivity extends AppCompatActivity {
     private void initToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbar_setting);
         toolbar.setTitle("设置");
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,6 +1,7 @@
 package com.tanyiqu.filesafe.activity;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -14,6 +15,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -155,6 +157,11 @@ public class AboutActivity extends AppCompatActivity {
     private void initToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbar_about);
         toolbar.setTitle("关于");
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

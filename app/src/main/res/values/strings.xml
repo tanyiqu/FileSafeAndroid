@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">FileSafe</string>
     <string name="app_version">Filesafe Version 1.0.0</string>
-
+    <string name="drawer_open">开启</string>
+    <string name="drawer_close">关闭</string>
     <!--侧滑菜单-->
 
     <string name="action_other_text">其他</string>

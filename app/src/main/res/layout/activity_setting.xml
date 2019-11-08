@@ -12,11 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorToolBar"
-        app:title="@string/app_name"
         app:titleTextColor="@color/colorActionBarTitle"
-        app:navigationIcon="@drawable/ic_btn_back"
         app:subtitleTextColor="#fff"
-        android:theme="@style/Base.Theme.AppCompat.Light"
+        android:theme="@style/ToolbarTheme"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
