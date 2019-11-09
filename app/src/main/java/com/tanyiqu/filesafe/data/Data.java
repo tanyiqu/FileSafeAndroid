@@ -2,10 +2,8 @@ package com.tanyiqu.filesafe.data;
 
 import android.Manifest;
 ;
-import com.tanyiqu.filesafe.Bean.DirBean;
-import com.tanyiqu.filesafe.Bean.FileBean;
-import com.tanyiqu.filesafe.activity.DirsActivity;
-import com.tanyiqu.filesafe.activity.FilesActivity;
+import com.tanyiqu.filesafe.bean.DirBean;
+import com.tanyiqu.filesafe.bean.FileBean;
 
 import java.util.List;
 

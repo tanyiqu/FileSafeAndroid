@@ -3,15 +3,25 @@
     <string name="app_version">Filesafe Version 1.0.0</string>
     <string name="drawer_open">开启</string>
     <string name="drawer_close">关闭</string>
+
     <!--侧滑菜单-->
+    <string name="action_general_text">常规</string>
+    <string name="action_theme_text">主题颜色</string>
+
+    <string name="action_tools_text">小工具</string>
+    <string name="action_recycle_bin_text">回收站</string>
+    <string name="action_material_text">素材来源</string>
+    <string name="action_donate_text">捐助</string>
 
     <string name="action_other_text">其他</string>
     <string name="action_setting_text">设置</string>
     <string name="action_about_text">关于</string>
+    <string name="action_share_text">分享</string>
 
-
-    <!--DirsFragment界面-->
-    <string name="action_add_dir_text">新建文件夹</string>
+    <!--Toolbar界面-->
+    <!--菜单-->
+    <string name="action_add_dir_text">新建目录</string>
+    <string name="action_overflow">更多选项</string>
 
 
     <!--关于页面-->
@@ -23,7 +33,6 @@
         \n\n仓库地址：https://github.com/Tanyiqu/FileSafe
         \n\n项目代码注释比较齐全，目录结构也十分清晰。以后尽量会添加新的小工具，敬请期待！项目仅用于学习用途，请勿用于商业用途！
     </string>
-
 
     <string name="about_author_title">Tanyiqu</string>
 

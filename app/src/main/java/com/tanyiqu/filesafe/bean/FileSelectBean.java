@@ -1,4 +1,4 @@
-package com.tanyiqu.filesafe.Bean;
+package com.tanyiqu.filesafe.bean;
 
 public class FileSelectBean {
     private int imgID;
@@ -6,6 +6,7 @@ public class FileSelectBean {
     private String size;
     private String date;
     private String parent;
+    private boolean dir;
 
     public FileSelectBean() { }
 
@@ -48,4 +49,13 @@ public class FileSelectBean {
     public void setParent(String parent) {
         this.parent = parent;
     }
+
+    public boolean isDir() {
+        return dir;
+    }
+
+    public void setDir(boolean dir) {
+        this.dir = dir;
+    }
+
 }

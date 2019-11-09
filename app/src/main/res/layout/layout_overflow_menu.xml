@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_rounded_corners">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/menu_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_ripple">
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="10dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_slide_setting"
+                android:scaleType="fitXY"
+                android:contentDescription="@string/img_content_description" />
+            <com.tanyiqu.filesafe.view.MiLanTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="100dp"
+                android:layout_gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="@string/action_setting_text"
+                android:textColor="@color/colorBlack"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/menu_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_ripple">
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_margin="10dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_slide_about"
+                android:scaleType="fitXY"
+                android:contentDescription="@string/img_content_description" />
+            <com.tanyiqu.filesafe.view.MiLanTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="100dp"
+                android:layout_gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="@string/action_about_text"
+                android:textColor="@color/colorBlack"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -10,7 +10,7 @@
     <color name="colorBackground">#EBEBEB</color>
 
     <!--特效颜色-->
-    <color name="colorRipple">#DFDFDF</color>
+    <color name="colorRipple">#DDDDDD</color>
 
     <!--色彩颜色-->
     <color name="colorWhite">#FFFFFF</color>
@@ -20,7 +20,7 @@
     <color name="colorPurple">#C89EC4</color>
 
     <!--控件颜色-->
-    <color name="colorLine">#7F7f7F</color>
+    <color name="colorLine">#7F7F7F</color>
     <color name="colorNumBtnNormal">#FBFBFB</color>
     <color name="colorNumBtnPressed">#DFDFDF</color>
 

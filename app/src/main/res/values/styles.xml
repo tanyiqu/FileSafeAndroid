@@ -21,15 +21,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/colorStatusBar</item>
-        <item name="android:activityOpenEnterAnimation">@anim/anim_page_jump_1</item>
-        <item name="android:activityOpenExitAnimation">@anim/anim_page_jump_2</item>
-        <item name="android:activityCloseEnterAnimation">@anim/anim_page_jump_3</item>
-        <item name="android:activityCloseExitAnimation">@anim/anim_page_jump_4</item>
     </style>
 
-    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:textSize">18sp</item>
-        <item name="colorControlNormal">@android:color/white</item>
+    <!--Toolbar主题-->
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
     </style>
 
     <!--对话框样式-->
@@ -52,7 +48,7 @@
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 
-    <!--新建目录对话框 动画-->
+    <!--对话框 动画-->
     <style name="normalDialogAnim" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/anim_dialog_enter</item>
         <item name="android:windowExitAnimation">@anim/anim_dialog_exit</item>

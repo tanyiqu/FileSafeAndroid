@@ -12,7 +12,7 @@ public class ScreenSizeUtil {
      * @param dp dp
      * @return px
      */
-    static float dp_2_px(Context context, int dp) {
+    public static float dp_2_px(Context context, int dp) {
         //获取屏蔽的像素密度系数
         float density = context.getResources().getDisplayMetrics().density;
         return dp * density;

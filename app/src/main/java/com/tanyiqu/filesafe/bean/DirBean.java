@@ -1,4 +1,4 @@
-package com.tanyiqu.filesafe.Bean;
+package com.tanyiqu.filesafe.bean;
 
 public class DirBean {
     //图片

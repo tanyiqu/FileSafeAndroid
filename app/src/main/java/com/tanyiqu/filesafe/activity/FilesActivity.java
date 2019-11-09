@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.tanyiqu.filesafe.Bean.FileBean;
+import com.tanyiqu.filesafe.bean.FileBean;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.exception.NoSuchFileToOpenException;

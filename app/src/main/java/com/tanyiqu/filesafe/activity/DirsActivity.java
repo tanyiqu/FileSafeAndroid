@@ -20,6 +20,7 @@ import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,13 +33,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.tanyiqu.filesafe.Bean.DirBean;
+import com.tanyiqu.filesafe.bean.DirBean;
 import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.utils.FileUtil;
@@ -62,10 +62,13 @@ import java.util.TimerTask;
 public class DirsActivity extends AppCompatActivity {
 
     private long exitTime = 0;
-    public static DrawerLayout drawer;
-    private static RecyclerView recycler;
-    private static DirsAdapter adapter;
-    public static LayoutAnimationController controller;//用作子fragment中的recycler动画
+    public DrawerLayout drawer;
+    private RecyclerView recycler;
+    Toolbar toolbar;
+    PopupWindow popupOverflowMenu;
+    int xoff;
+    private DirsAdapter adapter;
+    public static LayoutAnimationController controller;//可以在其他页面中继续使用的recycler动画
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,9 @@ public class DirsActivity extends AppCompatActivity {
         init();
     }
 
+    /**
+     * 初始化
+     */
     private void init() {
         //初始化各种值
         drawer = findViewById(R.id.drawer);
@@ -88,8 +94,12 @@ public class DirsActivity extends AppCompatActivity {
 
         initRecycler();
 
+        initPopupOverflowMenu();
     }
 
+    /**
+     * 初始化RecyclerView
+     */
     private void initRecycler() {
         recycler = findViewById(R.id.recycler_dirs);
         GridLayoutManager layoutManager = new GridLayoutManager(DirsActivity.this,2);
@@ -98,8 +108,11 @@ public class DirsActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
     }
 
+    /**
+     * 初始化Toolbar
+     */
     private void initToolBar() {
-        final Toolbar toolbar = findViewById(R.id.toolbar_dirs);
+        toolbar = findViewById(R.id.toolbar_dirs);
         //设置标题
         toolbar.setTitle("保险箱");
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.drawer_open,R.string.drawer_close){
@@ -120,8 +133,6 @@ public class DirsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
         }
-        //设置移除更多选项图片  如果不设置会默认使用系统灰色的图标
-        toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.ic_btn_more));
         //添加menu
         toolbar.inflateMenu(R.menu.menu_dirs_toolbar);
         //设置menu点击事件
@@ -132,15 +143,10 @@ public class DirsActivity extends AppCompatActivity {
                     case R.id.action_add_dir://新建目录
                         mkDir(toolbar.getContext());
                         break;
-                    case R.id.action_setting://设置界面
-                        startActivity(new Intent(DirsActivity.this, SettingActivity.class));
-                        overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
-                        break;
-                    case R.id.action_about://关于界面
-                        startActivity(new Intent(DirsActivity.this, AboutActivity.class));
-                        overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
-                        break;
-                    default:
+                    case R.id.action_overflow:
+                        if(!popupOverflowMenu.isShowing()){
+                            popupOverflowMenu.showAsDropDown(toolbar,xoff,0);
+                        }
                         break;
                 }
                 return false;
@@ -172,8 +178,6 @@ public class DirsActivity extends AppCompatActivity {
         });
     }
 
-
-
     /**
      * 根据配置文件夹刷新列表
      */
@@ -187,7 +191,13 @@ public class DirsActivity extends AppCompatActivity {
                 if(d.isDirectory() && !d.isHidden()){
                     //用 封面和名字 构造
                     String name = d.getName();
-                    String count = (d.listFiles().length-2) + "";
+                    File[] tmp = d.listFiles();
+                    String count;
+                    if(tmp != null){
+                        count = String.valueOf(tmp.length-2);
+                    }else {
+                        count = "%d";
+                    }
                     dirBeanList.add(new DirBean(d.getPath() + File.separator + "cover.jpg",name,count));
                 }
             }
@@ -308,9 +318,46 @@ public class DirsActivity extends AppCompatActivity {
         },150);
     }
 
+    /**
+     * 初始化overflow菜单
+     */
+    public void initPopupOverflowMenu() {
+        View contentView = getLayoutInflater().inflate(R.layout.layout_overflow_menu,null);
+        //强制绘制View，否则获取不到宽高
+        contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+        //点击“设置”
+        contentView.findViewById(R.id.menu_setting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(popupOverflowMenu!=null){
+                    popupOverflowMenu.dismiss();
+                }
+                startActivity(new Intent(DirsActivity.this, SettingActivity.class));
+                overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
+            }
+        });
+        //点击“关于”
+        contentView.findViewById(R.id.menu_about).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(popupOverflowMenu!=null){
+                    popupOverflowMenu.dismiss();
+                }
+                startActivity(new Intent(DirsActivity.this, AboutActivity.class));
+                overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
+            }
+        });
+        popupOverflowMenu = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupOverflowMenu.setOutsideTouchable(true);
+        popupOverflowMenu.setFocusable(true);
+        //计算偏移量：屏幕宽度 - popup的宽度
+        xoff = ScreenSizeUtil.getScreenWidth(this) - popupOverflowMenu.getContentView().getMeasuredWidth();
+    }
+
 
     /**
-     * Adapter
+     * Adapter类
      */
     public class DirsAdapter extends RecyclerView.Adapter<DirsAdapter.ViewHolder>{
 
@@ -536,6 +583,11 @@ public class DirsActivity extends AppCompatActivity {
         if(drawer.isDrawerOpen(GravityCompat.START)) {
             //如果打开了DrawerLayout则返回键是关闭
             drawer.closeDrawers();
+            return;
+        }
+        //关闭overflow菜单
+        if(popupOverflowMenu!=null && popupOverflowMenu.isShowing()){
+            popupOverflowMenu.dismiss();
             return;
         }
         if ((System.currentTimeMillis() - exitTime) > 1800) {

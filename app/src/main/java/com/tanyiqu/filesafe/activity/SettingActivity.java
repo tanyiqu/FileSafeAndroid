@@ -33,7 +33,7 @@ public class SettingActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                onBackPressed();
             }
         });
     }
@@ -43,4 +43,5 @@ public class SettingActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.anim_page_jump_3,R.anim.anim_page_jump_4);
     }
+
 }
