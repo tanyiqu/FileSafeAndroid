@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/menu_setting"
+            android:id="@+id/menu_ascending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -22,7 +22,7 @@
                 android:layout_height="25dp"
                 android:layout_margin="10dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_slide_setting"
+                android:src="@drawable/ic_overflow_ascending"
                 android:scaleType="fitXY"
                 android:contentDescription="@string/img_content_description" />
             <com.tanyiqu.filesafe.view.MiLanTextView
@@ -31,12 +31,12 @@
                 android:layout_marginEnd="100dp"
                 android:layout_gravity="center_vertical"
                 android:textSize="16sp"
-                android:text="@string/action_setting_text"
+                android:text="@string/action_ascending"
                 android:textColor="@color/colorBlack"/>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/menu_about"
+            android:id="@+id/menu_descending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -46,7 +46,7 @@
                 android:layout_height="25dp"
                 android:layout_margin="10dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_slide_about"
+                android:src="@drawable/ic_overflow_descending"
                 android:scaleType="fitXY"
                 android:contentDescription="@string/img_content_description" />
             <com.tanyiqu.filesafe.view.MiLanTextView
@@ -55,7 +55,7 @@
                 android:layout_marginEnd="100dp"
                 android:layout_gravity="center_vertical"
                 android:textSize="16sp"
-                android:text="@string/action_about_text"
+                android:text="@string/action_descending"
                 android:textColor="@color/colorBlack"/>
         </LinearLayout>
 

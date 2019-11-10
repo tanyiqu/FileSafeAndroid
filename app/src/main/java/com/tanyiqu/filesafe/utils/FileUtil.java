@@ -19,7 +19,6 @@ public class FileUtil {
      * @throws NoSuchFileToOpenException 没有文件异常
      */
     public static void openFile(Context context, File file,String ext) throws NoSuchFileToOpenException {
-
         if(! file.exists()){
             throw new NoSuchFileToOpenException("文件不存在");
         }
@@ -105,6 +104,12 @@ public class FileUtil {
             //代码
             case "html":
             case "xml":
+            case "java":
+            case "json":
+            case "c":
+            case "cpp":
+            case "h":
+            case "py":
                 return R.mipmap.ic_file_code;
             //默认
             case "":
@@ -211,4 +216,5 @@ public class FileUtil {
         }
         return true;
     }
+
 }

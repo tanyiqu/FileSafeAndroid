@@ -40,6 +40,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.tanyiqu.filesafe.bean.DirBean;
 import com.tanyiqu.filesafe.R;
+import com.tanyiqu.filesafe.bean.SettingBean;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
@@ -184,7 +185,7 @@ public class DirsActivity extends AppCompatActivity {
     public static void refreshDirs_list(){
         List<DirBean> dirBeanList = new ArrayList<>();
         //列出files文件夹的所有 文件夹
-        File dir = new File(Data.externalStoragePath + "/.file_safe/files");
+        File dir = new File(Data.filesPath);
         File[] files = dir.listFiles();
         if (files != null) {
             for(File d : files){//遍历列出的文件夹
@@ -206,7 +207,14 @@ public class DirsActivity extends AppCompatActivity {
         Comparator<DirBean> comparator = new Comparator<DirBean>() {
             @Override
             public int compare(DirBean l, DirBean r) {
-                return Collator.getInstance(Locale.CHINESE).compare(l.getName(),r.getName());
+                //升序
+                if(Data.setting.getDirsOrder().equals(SettingBean.DIRS_ORDER_ASCENDING)){
+                    return Collator.getInstance(Locale.CHINESE).compare(l.getName(),r.getName());
+                }
+                //降序
+                else {
+                    return Collator.getInstance(Locale.CHINESE).compare(r.getName(),l.getName());
+                }
             }
         };
         Collections.sort(dirBeanList,comparator);
@@ -255,7 +263,7 @@ public class DirsActivity extends AppCompatActivity {
                     return;
                 }
                 //构造目录文件
-                File newDir = new File(Data.externalStoragePath + File.separator + ".file_safe" + File.separator + "files", dirName);
+                File newDir = new File(Data.filesPath,dirName);
                 //如果已存在，提示错误
                 if (newDir.exists()) {
                     ToastUtil.errorToast(view.getContext(), "目录已存在");
@@ -326,26 +334,30 @@ public class DirsActivity extends AppCompatActivity {
         //强制绘制View，否则获取不到宽高
         contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 
-        //点击“设置”
-        contentView.findViewById(R.id.menu_setting).setOnClickListener(new View.OnClickListener() {
+        //点击“升序”
+        contentView.findViewById(R.id.menu_ascending).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(popupOverflowMenu!=null){
                     popupOverflowMenu.dismiss();
                 }
-                startActivity(new Intent(DirsActivity.this, SettingActivity.class));
-                overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
+                Data.setting.setDirsOrder(SettingBean.DIRS_ORDER_ASCENDING);
+                Util.syncSettingToFile(new File(Data.internalStoragePath,"config.json"));
+                refreshDirs_list();
+                refreshDirs_screen();
             }
         });
-        //点击“关于”
-        contentView.findViewById(R.id.menu_about).setOnClickListener(new View.OnClickListener() {
+        //点击“降序”
+        contentView.findViewById(R.id.menu_descending).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(popupOverflowMenu!=null){
                     popupOverflowMenu.dismiss();
                 }
-                startActivity(new Intent(DirsActivity.this, AboutActivity.class));
-                overridePendingTransition(R.anim.anim_page_jump_1,R.anim.anim_page_jump_2);
+                Data.setting.setDirsOrder(SettingBean.DIRS_ORDER_DESCENDING);
+                Util.syncSettingToFile(new File(Data.internalStoragePath,"config.json"));
+                refreshDirs_list();
+                refreshDirs_screen();
             }
         });
         popupOverflowMenu = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -406,7 +418,7 @@ public class DirsActivity extends AppCompatActivity {
             String count = " ("+item.getCount()+"项)";
             holder.tv_dirs_count.setText(count);
             //路径
-            holder.path = Data.externalStoragePath + File.separator + ".file_safe" + File.separator  + "files" + File.separator + item.getName();
+            holder.path = Data.filesPath + File.separator + item.getName();
             //设置点击事件
             holder.dirs_item.setOnClickListener(new View.OnClickListener() {
                 @Override

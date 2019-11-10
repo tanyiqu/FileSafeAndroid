@@ -22,6 +22,8 @@
     <!--菜单-->
     <string name="action_add_dir_text">新建目录</string>
     <string name="action_overflow">更多选项</string>
+    <string name="action_ascending">升序</string>
+    <string name="action_descending">降序</string>
 
 
     <!--关于页面-->

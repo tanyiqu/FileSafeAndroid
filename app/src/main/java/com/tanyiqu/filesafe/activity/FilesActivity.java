@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tanyiqu.filesafe.bean.FileBean;
@@ -25,6 +26,7 @@ import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.exception.NoSuchFileToOpenException;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
+import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.File;

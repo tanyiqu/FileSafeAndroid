@@ -39,6 +39,7 @@ public class PermissionActivity extends Activity implements  EasyPermissions.Per
 
     public void startApp(){
         if(EasyPermissions.hasPermissions(this, Data.perms_storage)){
+            //有权限了传递路径
             Data.setExternalStoragePath(Environment.getExternalStorageDirectory().getAbsolutePath());
             Data.setFilesPath(Data.externalStoragePath + File.separator + ".file_safe" + File.separator + "files");
             Data.setExportPath(Data.externalStoragePath + File.separator + "FileSafe" + File.separator + "Export");

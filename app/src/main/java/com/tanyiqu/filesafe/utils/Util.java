@@ -9,13 +9,19 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
 import com.tanyiqu.filesafe.R;
+import com.tanyiqu.filesafe.bean.SettingBean;
 import com.tanyiqu.filesafe.data.Data;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -111,6 +117,52 @@ public class Util {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 同步设置到json文件
+     * 包括写入到json文件中
+     * @param jsonFile 要写入的json文件
+     */
+    public static void syncSettingToFile(File jsonFile){
+        Gson gson = new Gson();
+        //获取对象的json数据
+        String jsonData = gson.toJson(Data.setting, SettingBean.class);
+        //将数据写入文件
+        try {
+            FileWriter fw = new FileWriter(jsonFile,false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(jsonData);
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 从json文件读取设置
+     * 只在开启是调用依次
+     * @param jsonFile 要读取的json文件
+     */
+    public static void getSettingFromFile(File jsonFile){
+        //读取json文件的内容
+        StringBuilder sb = new StringBuilder();
+        try {
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(jsonFile))
+            );
+            String line = "";
+            while ((line = br.readLine()) != null){
+                sb.append(line);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String jsonData = sb.toString();
+        //解析json数据
+        Gson gson = new Gson();
+        Data.setting = gson.fromJson(jsonData,SettingBean.class);
     }
 
     /**
