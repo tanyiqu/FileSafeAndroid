@@ -600,6 +600,7 @@ public class FileSelectActivity extends AppCompatActivity {
                     return true;
                 }
             });
+
         }
 
         @Override

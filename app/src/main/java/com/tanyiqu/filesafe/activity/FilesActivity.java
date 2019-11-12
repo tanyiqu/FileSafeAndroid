@@ -12,10 +12,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,32 +44,42 @@ public class FilesActivity extends AppCompatActivity {
     public static String path;
     String name;
     static RecyclerView recycler;
+    ProgressBar loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_files);
-
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
             path = extra.getString("path");
             name = extra.getString("name");
         }
         init();
-
     }
 
     private void init() {
+        Util.myLog("init");
         //设置共享元素的图片
         ImageView img = findViewById(R.id.img_cover);
+        Data.fileBeanList = new ArrayList<>();
         Bitmap bmp= BitmapFactory.decodeFile(path + File.separator + "cover.jpg");
         img.setImageBitmap(bmp);
+        loading = findViewById(R.id.loading);
 
         initToolBar();
 
-        initRecycler();
-
         addListeners();
+
+        //延时任务
+        new Handler().postDelayed(new Runnable(){
+            public void run() {
+                initRecycler();
+                refreshFileView_list(path);
+                refreshFileView_screen();
+                loading.setVisibility(View.GONE);
+            }
+        }, 800);
     }
 
     private void initToolBar() {
@@ -191,6 +205,7 @@ public class FilesActivity extends AppCompatActivity {
                     }
                 }
             });
+
         }
 
         @Override
@@ -200,9 +215,24 @@ public class FilesActivity extends AppCompatActivity {
 
     }
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+////        refreshFileView_list(path);
+////        refreshFileView_screen();
+//        Util.myLog("resume");
+//    }
+
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onRestart() {
+        super.onRestart();
+//        Util.myLog("restart");
+
+        //这一段是有一个bug，进度条在切换到最近任务再切换回来时 在某些手机会莫名显示出来 红米N7P出现此问题
+        if(loading.getVisibility() == View.VISIBLE){
+            loading.setVisibility(View.GONE);
+        }
+        //不在onResume刷新时因为onResume会在activity一开始执行
         refreshFileView_list(path);
         refreshFileView_screen();
     }

@@ -210,8 +210,8 @@ public class PasswdActivity extends Activity {
         //依次添加上默认封面
         Resources res = getResources();
         BitmapDrawable[] pics = new BitmapDrawable[]{
-                (BitmapDrawable) res.getDrawable(R.mipmap.pic),
-                (BitmapDrawable) res.getDrawable(R.mipmap.video)
+                (BitmapDrawable) res.getDrawable(R.mipmap.cover_pic),
+                (BitmapDrawable) res.getDrawable(R.mipmap.cover_video)
         };
         String fn = "cover.jpg";
         String[] paths = new String[]{

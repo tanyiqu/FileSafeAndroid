@@ -279,13 +279,16 @@ public class DirsActivity extends AppCompatActivity {
                 //如果输入特定的名字，添加特定的封面
                 switch (dirName){
                     case "视频":
-                        d = (BitmapDrawable) res.getDrawable(R.mipmap.video);
+                        d = (BitmapDrawable) res.getDrawable(R.mipmap.cover_video);
                         break;
                     case "图片":
-                        d = (BitmapDrawable) res.getDrawable(R.mipmap.pic);
+                        d = (BitmapDrawable) res.getDrawable(R.mipmap.cover_pic);
+                        break;
+                    case "音乐":
+                        d = (BitmapDrawable) res.getDrawable(R.mipmap.cover_music);
                         break;
                     default:
-                        d = (BitmapDrawable) res.getDrawable(R.mipmap.other);
+                        d = (BitmapDrawable) res.getDrawable(R.mipmap.cover_other);
                 }
                 Bitmap img = d.getBitmap();
                 String coverPath = newDir.getPath() + File.separator + "cover.jpg";
@@ -423,7 +426,7 @@ public class DirsActivity extends AppCompatActivity {
             holder.dirs_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //构造下一个页面的FileViewList
+//                    //构造下一个页面的FileViewList
                     FilesActivity.refreshFileView_list(holder.path);
                     //界面跳转，共享元素
                     Intent intent = new Intent(view.getContext(),FilesActivity.class);
