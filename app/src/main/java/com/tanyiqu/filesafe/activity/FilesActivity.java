@@ -11,21 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.TypefaceSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tanyiqu.filesafe.bean.FileBean;
@@ -34,8 +27,6 @@ import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.exception.NoSuchFileToOpenException;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
-import com.tanyiqu.filesafe.utils.TypefaceUtil;
-import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,9 +39,16 @@ public class FilesActivity extends AppCompatActivity {
 
     public static String path;
     String name;
+
+    //首次进入activity时目录是否为空
     String count;
     static RecyclerView recycler;
+
+    //圆形进图条
     ProgressBar loading;
+
+    //目录为空时显示的图片
+    ImageView imgNoItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,45 +59,54 @@ public class FilesActivity extends AppCompatActivity {
             path = extra.getString("path");
             name = extra.getString("name");
             count = extra.getString("count");
+        }else {
+            ToastUtil.errorToast(this,"错误");
+            finish();
         }
         init();
     }
 
     private void init() {
-        Util.myLog("init");
+//        Util.myLog("init");
         //设置共享元素的图片
-        ImageView img = findViewById(R.id.img_cover);
-        Data.fileBeanList = new ArrayList<>();
+        ImageView sceneTransitionImg = findViewById(R.id.img_cover);
         Bitmap bmp= BitmapFactory.decodeFile(path + File.separator + "cover.jpg");
-        img.setImageBitmap(bmp);
+        sceneTransitionImg.setImageBitmap(bmp);
+
+        Data.fileBeanList = new ArrayList<>();
+
+        //初始化变量
         loading = findViewById(R.id.loading);
+        imgNoItem = findViewById(R.id.img_no_item);
 
         initToolBar();
+        initRecycler();
+        initFAB();
 
-        addListeners();
-
+        //判断是否加载进度条
         //如果为空目录
         if(count.equals("0")){
             loading.setVisibility(View.GONE);
+            this.imgNoItem.setVisibility(View.VISIBLE);
         }
         //不是空目录
         else {
             //延时任务
             new Handler().postDelayed(new Runnable(){
                 public void run() {
-                    initRecycler();
                     refreshFileView_list(path);
                     refreshFileView_screen();
                     loading.setVisibility(View.GONE);
                 }
             }, 800);
         }
-
     }
 
+    /**
+     * 初始化Toolbar
+     */
     private void initToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbar_files);
-
         toolbar.setTitle(name);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -114,6 +121,9 @@ public class FilesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 初始化RecyclerView
+     */
     private void initRecycler() {
         recycler = findViewById(R.id.recycler_files);
         LinearLayoutManager layoutManager = new LinearLayoutManager(FilesActivity.this,RecyclerView.VERTICAL,false);
@@ -122,7 +132,10 @@ public class FilesActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
     }
 
-    private void addListeners() {
+    /**
+     * 初始化悬浮按钮
+     */
+    private void initFAB() {
         //悬浮按钮
         FloatingActionButton fab_add = findViewById(R.id.fab_add);
         fab_add.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +151,13 @@ public class FilesActivity extends AppCompatActivity {
     }
 
     //刷新列表
+
+    /**
+     * 刷新列表
+     * 根据路径找到相应的配置文件刷新列表
+     * 暂时不用json数组，以后测试效率后考虑更换
+     * @param path 路径
+     */
     public static void refreshFileView_list(String path){
         List<FileBean> list = new ArrayList<>();;
         String iniPath = path + File.separator + "data.db";
@@ -231,13 +251,10 @@ public class FilesActivity extends AppCompatActivity {
 
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-////        refreshFileView_list(path);
-////        refreshFileView_screen();
-//        Util.myLog("resume");
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     @Override
     protected void onRestart() {
@@ -248,8 +265,16 @@ public class FilesActivity extends AppCompatActivity {
         if(loading.getVisibility() == View.VISIBLE){
             loading.setVisibility(View.GONE);
         }
+
+        //重新启动时，判断列表是否为空
+        if(Data.fileBeanList.size() == 0){
+            imgNoItem.setVisibility(View.VISIBLE);
+        }else {
+            imgNoItem.setVisibility(View.GONE);
+        }
         //不在onResume刷新时因为onResume会在activity一开始执行
         refreshFileView_list(path);
+
         refreshFileView_screen();
     }
 }
