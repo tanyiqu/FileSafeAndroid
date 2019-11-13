@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.tanyiqu.filesafe.R;
+import com.tanyiqu.filesafe.utils.TypefaceUtil;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -16,6 +17,7 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         init();
+        TypefaceUtil.replaceFont(this,"fonts/MiLan.ttf");
     }
 
     private void init() {

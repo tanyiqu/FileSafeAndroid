@@ -1,5 +1,6 @@
 <paths>
     <external-path
-        name="external_storage_root"
+        name="file_safe_root_path"
         path="." />
 </paths>
+<!--    name="external_storage_root"-->

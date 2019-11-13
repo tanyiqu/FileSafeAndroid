@@ -11,9 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +34,7 @@ import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.exception.NoSuchFileToOpenException;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
+import com.tanyiqu.filesafe.utils.TypefaceUtil;
 import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.BufferedReader;
@@ -83,7 +88,8 @@ public class FilesActivity extends AppCompatActivity {
     }
 
     private void initToolBar() {
-        final Toolbar toolbar = findViewById(R.id.toolbar_files);
+        Toolbar toolbar = findViewById(R.id.toolbar_files);
+
         toolbar.setTitle(name);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();

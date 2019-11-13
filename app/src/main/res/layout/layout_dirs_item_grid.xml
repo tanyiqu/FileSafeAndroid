@@ -10,6 +10,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
+    android:stateListAnimator="@drawable/selector_cardview"
     android:id="@+id/dirs_item">
 
     <LinearLayout

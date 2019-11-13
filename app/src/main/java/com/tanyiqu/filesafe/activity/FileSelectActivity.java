@@ -36,6 +36,7 @@ import com.tanyiqu.filesafe.R;
 import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
+import com.tanyiqu.filesafe.utils.TypefaceUtil;
 import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.BufferedReader;
@@ -89,6 +90,7 @@ public class FileSelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_select);
         init();
+        TypefaceUtil.replaceFont(this,"fonts/MiLan.ttf");
     }
 
     /**

@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tanyiqu.filesafe.R;
+import com.tanyiqu.filesafe.utils.TypefaceUtil;
 import com.tanyiqu.filesafe.utils.Util;
 
 public class AboutActivity extends AppCompatActivity {
@@ -29,6 +30,7 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
         init();
+        TypefaceUtil.replaceFont(this,"fonts/MiLan.ttf");
     }
 
     /**

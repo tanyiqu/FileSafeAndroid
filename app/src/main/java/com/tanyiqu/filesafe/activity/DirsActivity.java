@@ -45,6 +45,7 @@ import com.tanyiqu.filesafe.data.Data;
 import com.tanyiqu.filesafe.utils.FileUtil;
 import com.tanyiqu.filesafe.utils.ScreenSizeUtil;
 import com.tanyiqu.filesafe.utils.ToastUtil;
+import com.tanyiqu.filesafe.utils.TypefaceUtil;
 import com.tanyiqu.filesafe.utils.Util;
 
 import java.io.File;
@@ -76,6 +77,7 @@ public class DirsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dirs);
         init();
+        TypefaceUtil.replaceFont(this,"fonts/MiLan.ttf");
     }
 
     /**
