@@ -434,6 +434,7 @@ public class DirsActivity extends AppCompatActivity {
                     Intent intent = new Intent(view.getContext(),FilesActivity.class);
                     intent.putExtra("path",holder.path);
                     intent.putExtra("name",item.getName());
+                    intent.putExtra("count",item.getCount());
                     holder.img_dirs_item.setTransitionName("tt");
                     ActivityOptions options  = ActivityOptions.makeSceneTransitionAnimation(DirsActivity.this,holder.img_dirs_item,"tt");
                     DirsActivity.this.startActivity(intent,options.toBundle());

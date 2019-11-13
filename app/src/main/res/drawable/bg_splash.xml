@@ -4,7 +4,7 @@
         <!-- 图片 -->
         <bitmap
             android:gravity="fill"
-            android:src="@drawable/bg_splash_cat"/>
+            android:src="@drawable/bg_splash_stars"/>
     </item>
 
 </layer-list>

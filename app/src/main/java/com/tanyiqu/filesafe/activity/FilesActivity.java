@@ -48,6 +48,7 @@ public class FilesActivity extends AppCompatActivity {
 
     public static String path;
     String name;
+    String count;
     static RecyclerView recycler;
     ProgressBar loading;
 
@@ -59,6 +60,7 @@ public class FilesActivity extends AppCompatActivity {
         if (extra != null) {
             path = extra.getString("path");
             name = extra.getString("name");
+            count = extra.getString("count");
         }
         init();
     }
@@ -76,15 +78,23 @@ public class FilesActivity extends AppCompatActivity {
 
         addListeners();
 
-        //延时任务
-        new Handler().postDelayed(new Runnable(){
-            public void run() {
-                initRecycler();
-                refreshFileView_list(path);
-                refreshFileView_screen();
-                loading.setVisibility(View.GONE);
-            }
-        }, 800);
+        //如果为空目录
+        if(count.equals("0")){
+            loading.setVisibility(View.GONE);
+        }
+        //不是空目录
+        else {
+            //延时任务
+            new Handler().postDelayed(new Runnable(){
+                public void run() {
+                    initRecycler();
+                    refreshFileView_list(path);
+                    refreshFileView_screen();
+                    loading.setVisibility(View.GONE);
+                }
+            }, 800);
+        }
+
     }
 
     private void initToolBar() {
