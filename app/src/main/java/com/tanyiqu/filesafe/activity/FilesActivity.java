@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -47,8 +48,8 @@ public class FilesActivity extends AppCompatActivity {
     //圆形进图条
     ProgressBar loading;
 
-    //目录为空时显示的图片
-    ImageView imgNoItem;
+    //目录为空时显示的提示
+    LinearLayout noItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,7 @@ public class FilesActivity extends AppCompatActivity {
 
         //初始化变量
         loading = findViewById(R.id.loading);
-        imgNoItem = findViewById(R.id.img_no_item);
+        noItem = findViewById(R.id.img_no_item);
 
         initToolBar();
         initRecycler();
@@ -87,7 +88,7 @@ public class FilesActivity extends AppCompatActivity {
         //如果为空目录
         if(count.equals("0")){
             loading.setVisibility(View.GONE);
-            this.imgNoItem.setVisibility(View.VISIBLE);
+            this.noItem.setVisibility(View.VISIBLE);
         }
         //不是空目录
         else {
@@ -268,9 +269,9 @@ public class FilesActivity extends AppCompatActivity {
 
         //重新启动时，判断列表是否为空
         if(Data.fileBeanList.size() == 0){
-            imgNoItem.setVisibility(View.VISIBLE);
+            noItem.setVisibility(View.VISIBLE);
         }else {
-            imgNoItem.setVisibility(View.GONE);
+            noItem.setVisibility(View.GONE);
         }
         //不在onResume刷新时因为onResume会在activity一开始执行
         refreshFileView_list(path);

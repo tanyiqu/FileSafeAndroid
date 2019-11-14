@@ -7,25 +7,26 @@
     <!--侧滑菜单-->
     <string name="action_general_text">常规</string>
     <string name="action_theme_text">主题颜色</string>
-
     <string name="action_tools_text">小工具</string>
     <string name="action_recycle_bin_text">回收站</string>
     <string name="action_material_text">素材来源</string>
     <string name="action_donate_text">捐助</string>
-
     <string name="action_other_text">其他</string>
     <string name="action_setting_text">设置</string>
     <string name="action_about_text">关于</string>
     <string name="action_share_text">分享</string>
 
-    <!--Toolbar界面-->
+    <!--Files界面-->
+    <string name="no_item">什么都没有哦</string>
+
+    <!--Toolbar-->
     <!--菜单-->
     <string name="action_add_dir_text">新建目录</string>
     <string name="action_overflow">更多选项</string>
     <string name="action_ascending">升序</string>
     <string name="action_descending">降序</string>
 
-    <!--关于页面-->
+    <!--关于界面-->
     <string name="about_app_author">code by Tanyiqu</string>
     <string name="about_app_title">比特域</string>
     <string name="about_app_content">
@@ -34,9 +35,7 @@
         \n\n仓库地址：https://github.com/Tanyiqu/FileSafe
         \n\n项目代码注释比较齐全，目录结构也十分清晰。以后尽量会添加新的小工具，敬请期待！项目仅用于学习用途，请勿用于商业用途！
     </string>
-
     <string name="about_author_title">Tanyiqu</string>
-
     <string name="about_author_content">
         Tanyiqu,名字出自唐代诗人白居易的《琵琶行》中的“莫辞更坐弹一曲”
         \nTanyiqu在写此项目时为大三学生，计算机科学与技术专业
@@ -47,9 +46,7 @@
         \n\n邮箱：1953649096@qq.com
         \n\nGitHub：https://github.com/Tanyiqu
     </string>
-
     <string name="thanks_title">感谢</string>
-
     <string name="thanks_content">
         百度搜索引擎：https://www.baidu.com
         \n\nCSDN博客：https://www.csdn.net

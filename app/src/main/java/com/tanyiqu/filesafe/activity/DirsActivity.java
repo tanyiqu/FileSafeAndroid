@@ -65,12 +65,18 @@ public class DirsActivity extends AppCompatActivity {
 
     private long exitTime = 0;
     public DrawerLayout drawer;
-    private RecyclerView recycler;
     Toolbar toolbar;
-    PopupWindow popupOverflowMenu;
-    int xoff;
+    private RecyclerView recycler;
+    GridLayoutManager layoutManager;
     private DirsAdapter adapter;
     public static LayoutAnimationController controller;//可以在其他页面中继续使用的recycler动画
+
+    int position = 0;
+    int offset = 0;
+
+    PopupWindow popupOverflowMenu;
+    //overflow菜单的x偏移量
+    int xoff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,10 +111,22 @@ public class DirsActivity extends AppCompatActivity {
      */
     private void initRecycler() {
         recycler = findViewById(R.id.recycler_dirs);
-        GridLayoutManager layoutManager = new GridLayoutManager(DirsActivity.this,2);
+        layoutManager = new GridLayoutManager(DirsActivity.this,2);
         recycler.setLayoutManager(layoutManager);
         adapter = new DirsAdapter(Data.dirBeanList);
         recycler.setAdapter(adapter);
+
+//        recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                View firstView = layoutManager.getChildAt(0);
+//                if(firstView != null){
+//                    offset = firstView.getTop();
+//                    position = layoutManager.getPosition(firstView);
+//                }
+//            }
+//        });
     }
 
     /**
@@ -428,7 +446,15 @@ public class DirsActivity extends AppCompatActivity {
             holder.dirs_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    //构造下一个页面的FileViewList
+                    //记录当前的偏移位置，方便返回时回到原位置
+                    View firstView = layoutManager.getChildAt(0);
+                    if(firstView != null){
+                        DirsActivity.this.position = layoutManager.getPosition(firstView);
+                        //后面的-8是因为item有8dp的margin
+                        DirsActivity.this.offset = firstView.getTop() - (int)ScreenSizeUtil.dp_2_px(view.getContext(),8);
+                    }
+
+                    //构造下一个页面的FileViewList
                     FilesActivity.refreshFileView_list(holder.path);
                     //界面跳转，共享元素
                     Intent intent = new Intent(view.getContext(),FilesActivity.class);
@@ -626,6 +652,8 @@ public class DirsActivity extends AppCompatActivity {
         //只要此界面显示了，就刷新视图（防止误删文件夹后，又点击）
         refreshDirs_list();
         refreshDirs_screen();
+        //回到上次的位置
+        layoutManager.scrollToPositionWithOffset(position,offset);
     }
 
 }
